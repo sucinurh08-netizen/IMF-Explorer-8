@@ -1,0 +1,249 @@
+
+# AGENTS.md — IMF Explorer
+
+## 1. Identitas dan Acuan Proyek
+
+Proyek ini adalah **IMF Explorer: Jelajah Gaya Antarmolekul**, aplikasi web pembelajaran Kimia interaktif untuk peserta didik SMA/MA kelas XI (Fase F).
+
+Gunakan dokumen berikut sesuai fungsinya:
+
+- `PRD.md` — sumber utama spesifikasi produk: tujuan pembelajaran, fitur, alur, ruang lingkup, dan kriteria penerimaan.
+- `AGENTS.md` — aturan teknis, cara kerja coding agent, ketentuan konten, dan penggunaan skill.
+- `AI_LOG.md` — catatan prompt, perubahan kode, hasil pengujian, koreksi, dan keputusan yang relevan.
+
+Sebelum mengerjakan tugas:
+1. Baca `PRD.md` dan `AGENTS.md`.
+2. Periksa struktur folder, konfigurasi, dan kode yang sudah ada.
+3. Identifikasi bagian PRD yang berkaitan dengan tugas.
+4. Rencanakan perubahan sekecil mungkin untuk memenuhi kebutuhan tersebut.
+
+**Jangan mengubah spesifikasi produk secara diam-diam.** Jika instruksi baru bertentangan dengan PRD, jelaskan konflik dan minta keputusan sebelum mengubah ruang lingkup produk.
+
+## 2. Teknologi dan Batasan Teknis
+
+Gunakan teknologi yang ditetapkan untuk proyek:
+
+- Framework: React.
+- Build tool dan development server: Vite.
+- Bahasa pemrograman: JavaScript dengan JSX.
+- Styling: CSS dan Tailwind CSS sesuai konfigurasi proyek.
+- Visualisasi: SVG dan CSS untuk ilustrasi serta animasi molekuler.
+- Penyimpanan progres: `localStorage` pada browser.
+
+Ketentuan:
+1. Gunakan function component React dan React Hooks sesuai kebutuhan.
+2. Jangan mengganti React, Vite, atau bahasa pemrograman yang telah ditetapkan.
+3. Jangan menambahkan framework, library, atau dependency baru tanpa alasan yang jelas dan persetujuan jika perubahan tersebut berdampak pada teknologi proyek.
+4. Jangan memasang Tailwind CSS jika proyek belum menggunakannya dan penambahan tersebut belum disetujui.
+5. Jangan menggunakan Three.js, WebGL, atau teknologi simulasi 3D berat. Visualisasi mengikuti ruang lingkup PRD.
+6. Periksa `package.json` dan konfigurasi yang tersedia sebelum mengubah setup.
+7. Jangan mengubah versi dependency atau konfigurasi build yang tidak berkaitan dengan tugas.
+
+## 3. Penyimpanan Data
+
+Gunakan `localStorage` untuk penyimpanan progres belajar secara lokal dan anonim.
+
+Data yang dapat disimpan sesuai kebutuhan PRD:
+- Status penyelesaian modul.
+- Modul atau halaman terakhir yang dikunjungi.
+- Nilai kuis formatif.
+- Hasil evaluasi akhir dan informasi remedial yang diperlukan.
+
+Ketentuan:
+1. Tidak memerlukan registrasi, login, atau akun siswa.
+2. Tidak menggunakan backend, database cloud, atau layanan penyimpanan eksternal.
+3. Simpan progres secara otomatis ketika terjadi perubahan yang relevan.
+4. Progres harus dapat dipulihkan setelah halaman di-refresh atau browser dibuka kembali.
+5. Fitur reset progres harus mengikuti PRD dan meminta konfirmasi sebelum menghapus data.
+6. Tangani data kosong, tidak valid, atau kegagalan membaca `localStorage` agar aplikasi tidak berhenti.
+7. Jangan menyimpan informasi pribadi yang tidak dibutuhkan untuk fungsi pembelajaran.
+
+## 4. Struktur Proyek
+
+Gunakan struktur modular dan konsisten. Jangan membuat seluruh aplikasi dalam satu file besar.
+
+Struktur awal yang dapat digunakan jika sesuai dengan kondisi proyek:
+
+```text
+imf-explorer/
+├── PRD.md
+├── AGENTS.md
+├── AI_LOG.md
+├── package.json
+├── index.html
+└── src/
+    ├── main.jsx
+    ├── App.jsx
+    ├── components/
+    ├── pages/
+    ├── data/
+    ├── utils/
+    └── styles/
+```
+
+Aturan:
+1. Struktur tersebut adalah panduan, bukan instruksi untuk memindahkan file yang sudah berfungsi.
+2. Periksa struktur aktual sebelum membuat folder atau file baru.
+3. Komponen tampilan yang digunakan kembali ditempatkan di `src/components/`.
+4. Halaman atau modul pembelajaran ditempatkan di `src/pages/` jika pola tersebut sesuai dengan proyek.
+5. Data materi, pertanyaan, kunci jawaban, dan umpan balik dapat dipisahkan dari komponen tampilan.
+6. Fungsi penyimpanan dan perhitungan skor dipisahkan jika pemisahan tersebut membuat kode lebih mudah dipelihara.
+7. Hindari duplikasi komponen, folder, dan fungsi.
+8. Jangan melakukan refactor besar hanya untuk mengikuti contoh struktur ini.
+
+## 5. Bahasa Antarmuka
+
+Gunakan **Bahasa Indonesia baku, komunikatif, dan sesuai tingkat pemahaman peserta didik SMA kelas XI**.
+
+Ketentuan:
+1. Gunakan istilah kimia yang benar dan konsisten.
+2. Tulis kalimat yang jelas, langsung, dan tidak terlalu panjang.
+3. Hindari bahasa terlalu formal, kaku, atau menyerupai terjemahan mesin.
+4. Hindari slang berlebihan dan dekorasi bahasa yang mengganggu pemahaman.
+5. Gunakan istilah bahasa Inggris jika memang merupakan istilah teknis yang diperlukan.
+6. Pertahankan nama modul, tombol, dan istilah yang sudah ditetapkan dalam PRD.
+7. Jangan mengubah pertanyaan, instruksi, atau umpan balik pembelajaran hanya demi gaya bahasa tanpa memeriksa maknanya.
+
+## 6. Narasi dan Ketepatan Konsep Kimia
+
+Narasi pembelajaran harus selaras dengan tujuan pembelajaran, urutan materi, dan ruang lingkup PRD.
+
+### Gaya narasi
+
+- Hubungkan fenomena makroskopik dengan penjelasan submikroskopik.
+- Gunakan representasi simbolik ketika diperlukan.
+- Jelaskan hubungan sebab-akibat, bukan hanya memberikan definisi.
+- Gunakan pertanyaan pemantik dan umpan balik yang membantu siswa memahami alasan di balik jawabannya.
+- Pertahankan urutan pembelajaran dan fungsi setiap modul.
+- Jangan menambahkan materi di luar ruang lingkup PRD tanpa persetujuan.
+
+### Pemeriksaan ilmiah
+
+Periksa ketepatan konsep berikut ketika mengembangkan atau mengubah materi:
+
+1. Gaya London terjadi pada semua molekul, baik polar maupun nonpolar.
+2. Gaya dipol-dipol melibatkan interaksi antara molekul polar dengan orientasi kutub yang sesuai.
+3. Ikatan hidrogen harus dijelaskan berdasarkan syarat pembentukan dan interaksi antar molekul. Jangan menyatakan bahwa semua molekul yang mengandung H otomatis membentuk ikatan hidrogen.
+4. Bedakan ikatan intramolekul dengan gaya antarmolekul. Penguapan air tidak berarti ikatan kovalen O–H di dalam molekul air terputus.
+5. Ketidakcampuran air dan minyak harus dijelaskan berdasarkan kepolaran dan interaksi antarmolekul, bukan hanya perbedaan massa jenis.
+6. Gunakan notasi kimia yang benar, termasuk subskrip, superskrip, muatan ion, dan muatan parsial.
+
+**Jika narasi atau spesifikasi PRD mengandung pernyataan kimia yang berpotensi salah:**
+- Jangan mengarang koreksi atau mengubah naskah secara diam-diam.
+- Jangan langsung menanamkan pernyataan tersebut ke dalam kode sebagai fakta ilmiah.
+- Tandai bagian yang bermasalah, jelaskan alasan dan dampaknya, lalu minta keputusan atau validasi.
+- Perubahan yang sudah disetujui harus dicatat di `AI_LOG.md` dan, jika mengubah spesifikasi produk, diperbarui juga di PRD.
+
+## 7. Desain dan Pengalaman Pengguna
+
+Ikuti desain dan palet warna yang ditetapkan dalam PRD.
+
+Palet utama:
+- Deep Forest: `#245B45`
+- Forest Green: `#39765A`
+- Sage Green: `#A8C3A0`
+- Soft Mint: `#EAF2E6`
+- Warm Cream: `#FAF7ED`
+- Soft Orange: `#E9A15B`
+- Warm Yellow: `#F3D77A`
+
+Ketentuan:
+1. Pertahankan konsistensi warna, tipografi, tombol, kartu, dan navigasi.
+2. Gunakan layout responsif untuk desktop, tablet, dan smartphone.
+3. Utamakan visualisasi ringan menggunakan CSS dan SVG.
+4. Pastikan animasi dapat dikontrol pengguna sesuai kebutuhan fitur.
+5. Pastikan tombol, slider, dan aktivitas kuis dapat digunakan melalui keyboard.
+6. Jangan mengorbankan keterbacaan teks dan notasi kimia demi dekorasi.
+7. Jangan mengubah tema, palet, atau gaya visual tanpa persetujuan.
+
+## 8. Penggunaan External Skills
+
+External skills dapat digunakan sebagai **kemampuan tambahan untuk membantu mengerjakan tugas**, bukan sebagai sumber spesifikasi produk.
+
+### Sebelum menggunakan skill
+
+1. Gunakan skill hanya jika skill tersebut tersedia di lingkungan coding agent atau telah disediakan secara resmi untuk proyek.
+2. Baca instruksi skill sebelum menggunakannya.
+3. Periksa apakah skill relevan dengan tugas yang sedang dikerjakan.
+4. Gunakan hanya bagian instruksi yang berkaitan dengan tugas.
+5. Jika skill meminta perubahan teknologi, penambahan dependency, akses layanan eksternal, atau perluasan fitur, jangan melakukannya tanpa persetujuan.
+
+### Batas kewenangan skill
+
+Urutan acuan proyek:
+
+1. Persetujuan pengguna untuk perubahan yang berdampak pada ruang lingkup produk.
+2. `PRD.md` sebagai spesifikasi produk yang telah disepakati.
+3. `AGENTS.md` sebagai aturan kerja dan batasan teknis.
+4. External skills sebagai panduan tambahan untuk menyelesaikan tugas tertentu.
+5. Kode proyek yang sudah berjalan sebagai konteks implementasi aktual.
+
+Skill tidak boleh:
+- Mengubah tujuan pembelajaran atau alur modul.
+- Mengganti teknologi yang telah ditetapkan.
+- Menambahkan fitur di luar PRD.
+- Menghapus atau menimpa file tanpa alasan yang jelas.
+- Mengabaikan pemeriksaan ketepatan kimia.
+- Mengirim data proyek atau informasi pengguna ke layanan eksternal tanpa izin.
+
+Jika instruksi skill bertentangan dengan PRD atau AGENTS, ikuti dokumen proyek dan abaikan bagian skill yang bertentangan. Jika konflik tidak dapat diselesaikan, berhenti pada bagian yang terdampak dan minta klarifikasi.
+
+Jangan menganggap suatu skill telah terpasang hanya karena namanya disebut dalam prompt. Jika skill belum tersedia, jelaskan bahwa skill tersebut belum dapat digunakan dan lanjutkan dengan kemampuan yang tersedia jika memungkinkan.
+
+## 9. Batasan Ruang Lingkup
+
+Jangan menambahkan fitur berikut tanpa persetujuan:
+- Login, registrasi, atau akun siswa.
+- Backend dan database cloud.
+- Leaderboard publik.
+- Live chat atau diskusi antar pengguna.
+- Integrasi LMS.
+- Simulasi 3D berat.
+- Fitur baru yang tidak tercantum dalam PRD.
+
+Fokus pengembangan adalah menyelesaikan fitur, interaksi, dan alur pembelajaran yang telah ditetapkan dalam PRD.
+
+## 10. Aturan Kerja Coding Agent
+
+Gunakan siklus kerja berikut:
+
+1. **Baca:** Periksa PRD, AGENTS, skill yang relevan, dan kode yang berkaitan.
+2. **Rencanakan:** Identifikasi kebutuhan serta file yang akan dibuat atau diubah.
+3. **Kerjakan:** Lakukan perubahan sekecil dan sespesifik mungkin.
+4. **Jelaskan:** Sebutkan file yang diubah dan tujuan perubahannya.
+5. **Uji:** Jalankan aplikasi dan periksa hasil di browser.
+6. **Periksa:** Pastikan isi kimia, tampilan, interaksi, dan penyimpanan sesuai kebutuhan.
+7. **Catat:** Dokumentasikan perubahan dan hasil pemeriksaan di `AI_LOG.md`.
+
+Ketentuan tambahan:
+- Jangan mengklaim fitur selesai jika belum diperiksa.
+- Jangan menghapus fitur yang sudah berfungsi hanya untuk menyederhanakan kode.
+- Jangan mengubah banyak bagian sekaligus jika satu perubahan kecil dapat diuji terlebih dahulu.
+- Jika menemukan bug, perbaiki tanpa mengubah bagian lain yang tidak berkaitan.
+- Jika tugas tidak jelas atau bertentangan dengan PRD, minta klarifikasi sebelum melakukan perubahan yang berdampak besar.
+- Jika menggunakan external skill, catat nama skill dan bagian pekerjaan yang dibantu jika pengguna memerlukan dokumentasi proses.
+
+## 11. Pemeriksaan Sebelum Menyatakan Selesai
+
+Setiap perubahan harus diperiksa sesuai jenisnya.
+
+### Pemeriksaan teknis
+- Aplikasi dapat dijalankan menggunakan perintah yang tersedia di `package.json`.
+- Tidak ada error baru pada console browser.
+- Tidak ada dependency atau import yang tidak diperlukan.
+- Navigasi dan interaksi yang terdampak berfungsi.
+
+### Pemeriksaan pembelajaran
+- Isi sesuai PRD.
+- Istilah dan notasi kimia benar.
+- Animasi tidak menggambarkan konsep yang keliru.
+- Kunci jawaban dan umpan balik kuis sesuai konsep kimia.
+- Progres tersimpan dan dapat dipulihkan jika fitur penyimpanan terdampak.
+
+### Pemeriksaan tampilan
+- Layout tidak rusak pada desktop dan smartphone.
+- Teks dan notasi dapat dibaca.
+- Tombol dan kontrol berfungsi.
+- Warna serta komponen tetap konsisten dengan desain PRD.
+
+Jangan menandai perubahan sebagai selesai sebelum pemeriksaan yang relevan dilakukan.
