@@ -8,3 +8,4 @@ export const MODULE_1 = {
   scientificNotes: 'Pemisahan air dan minyak didorong oleh ketidakcocokan interaksi molekuler dan polaritas, bukan semata perbedaan massa jenis.',
   // placeholder for content, dapat di‑isi lebih detail oleh tim
 };
+
