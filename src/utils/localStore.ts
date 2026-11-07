@@ -1,6 +1,4 @@
-import { QuizQuestion } from '../data/module1Quiz';
-import { MODULE_1 } from '../data/module1';
-import { useState, useEffect } from 'react';
+
 
 /** Helper for safe localStorage access */
 export const safeGet = (key: string): any => {
