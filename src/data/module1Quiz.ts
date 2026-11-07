@@ -1,58 +1,76 @@
+
 export type QuizQuestion = {
   id: string;
   question: string;
-  options: string[]; // A‑E
-  correctOption: string; // e.g., 'B'
-  explanation: string; // feedback shown after submit
+  options: string[];
+  correctOption: string;
+  explanation: string;
 };
 
 export const MODULE_1_QUIZ: QuizQuestion[] = [
   {
     id: 'q1',
-    question: 'Apa yang menyebabkan air dan minyak tidak bercampur?',
+    question: 'Apa faktor utama yang menyebabkan air dan minyak sulit bercampur?',
     options: [
-      'Perbedaan massa jenis',
-      'Perbedaan polaritas molekul',
-      'Interaksi ionik kuat',
-      'Kadar garam dalam air',
-      'Suhu lingkungan tinggi',
+      'Perbedaan massa jenis kedua zat',
+      'Perbedaan polaritas dan karakteristik interaksi antarmolekul',
+      'Adanya ikatan ionik antara air dan minyak',
+      'Perbedaan jumlah atom dalam molekul',
+      'Perbedaan suhu kedua zat',
     ],
     correctOption: 'B',
-    explanation: 'Air polar dan minyak non‑polar; gaya London tidak cukup kuat untuk mengatasi interaksi polar‑nonpolar.',
+    explanation: 'Air bersifat polar, sedangkan minyak umumnya nonpolar. Interaksi antara keduanya kurang menguntungkan dibandingkan interaksi antarmolekul sejenis sehingga keduanya cenderung membentuk dua fase.'
   },
   {
     id: 'q2',
-    question: 'Gaya London terjadi pada:',
-    options: ['Molekul polar saja', 'Molekul nonpolar saja', 'Semua molekul', 'Hanya molekul gas', 'Molekul ionik'],
+    question: 'Gaya dispersi London dapat terjadi pada ...',
+    options: [
+      'Molekul polar saja',
+      'Molekul nonpolar saja',
+      'Semua atom dan molekul',
+      'Hanya molekul gas',
+      'Hanya senyawa ionik',
+    ],
     correctOption: 'C',
-    explanation: 'Fluktuasi awan elektron menghasilkan dipol sesaat pada semua molekul, baik polar maupun nonpolar.',
+    explanation: 'Gaya dispersi London berasal dari dipol sesaat akibat perubahan distribusi elektron. Gaya ini dapat terjadi pada semua atom dan molekul.'
   },
   {
     id: 'q3',
-    question: 'Manakah contoh ikatan hidrogen yang sah?',
-    options: ['H‑Cl', 'O‑H dalam H₂O', 'C‑H dalam CH₄', 'N‑N dalam N₂', 'F‑F dalam F₂'],
-    correctOption: 'B',
-    explanation: 'Ikatan hidrogen memerlukan H‑δ⁺ yang terikat pada F, O, atau N yang memiliki pasangan elektron bebas.',
+    question: 'Manakah pasangan molekul yang dapat membentuk ikatan hidrogen antarmolekul?',
+    options: [
+      'CH₄ dengan CH₄',
+      'HCl dengan HCl',
+      'H₂O dengan H₂O',
+      'N₂ dengan N₂',
+      'CO₂ dengan CO₂',
+    ],
+    correctOption: 'C',
+    explanation: 'Molekul air memiliki atom H yang terikat pada O dan pasangan elektron bebas pada O molekul lain. Keduanya memungkinkan terbentuknya ikatan hidrogen antarmolekul.'
   },
   {
     id: 'q4',
-    question: 'Apa yang menjadi penyebab gaya dipol‑dipol?',
+    question: 'Gaya dipol-dipol terjadi akibat interaksi antara ...',
     options: [
-      'Interaksi antara molekul nonpolar',
-      'Interaksi antara kutub positif‑negatif pada molekul polar',
-      'Pengaruh medan magnet eksternal',
-      'Gaya van der Waals',
-      'Tekanan tinggi',
+      'Molekul-molekul nonpolar',
+      'Kutub positif dan negatif dari molekul-molekul polar',
+      'Inti atom dengan elektron bebas',
+      'Ion positif dan ion negatif saja',
+      'Elektron dengan medan magnet',
     ],
     correctOption: 'B',
-    explanation: 'Molekul polar memiliki muatan parsial δ⁺ dan δ⁻; orientasi yang tepat menghasilkan tarik‑tarik elektrostatik.',
+    explanation: 'Molekul polar memiliki momen dipol permanen. Tarik-menarik elektrostatik terjadi antara bagian bermuatan parsial positif dan negatif dari molekul yang berdekatan.'
   },
   {
     id: 'q5',
-    question: 'Berapa nilai energi gaya antarmolekul dibandingkan ikatan kovalen?',
-    options: ['~200‑500 kJ mol⁻¹', '≈2‑40 kJ mol⁻¹', '≈100‑200 kJ mol⁻¹', '≈0,5‑1 kJ mol⁻¹', 'Tidak dapat diukur'],
-    correctOption: 'B',
-    explanation: 'Gaya antarmolekul jauh lebih lemah (≈2‑40 kJ mol⁻¹) dibandingkan ikatan kovalen (≈200‑500 kJ mol⁻¹).',
+    question: 'Pernyataan yang tepat mengenai gaya antarmolekul dibandingkan ikatan kovalen adalah ...',
+    options: [
+      'Gaya antarmolekul umumnya lebih kuat',
+      'Keduanya selalu memiliki kekuatan yang sama',
+      'Gaya antarmolekul umumnya lebih lemah',
+      'Gaya antarmolekul hanya terjadi pada zat cair',
+      'Ikatan kovalen hanya terjadi pada zat gas',
+    ],
+    correctOption: 'C',
+    explanation: 'Secara umum, gaya antarmolekul lebih lemah daripada ikatan kovalen yang mengikat atom-atom dalam molekul.'
   },
 ];
-
