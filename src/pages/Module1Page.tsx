@@ -57,6 +57,7 @@ const Module1Page: React.FC = () => {
   const [draft, setDraft] = useState<any>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     try {
       const saved = localStorage.getItem(`draft-${MODULE_1.id}`);
 
@@ -70,6 +71,9 @@ const Module1Page: React.FC = () => {
 
   const handleBack = () => {
     navigate('/');
+  };
+  const handleNext = () => {
+    navigate('/module-2');
   };
 
   return (
@@ -199,6 +203,11 @@ const Module1Page: React.FC = () => {
           <button onClick={handleBack}>
             ← Kembali ke Beranda
           </button>
+
+          <button onClick={handleNext}>
+            Lanjut ke Modul 2 →
+          </button>
+
           <span>IMF Explorer · Pembelajaran Kimia</span>
         </div>
       </main>
