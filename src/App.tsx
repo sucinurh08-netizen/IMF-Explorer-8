@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Module1Page from './pages/Module1Page';
 import Module2Page from './pages/Module2Page';
+import Module3Page from './pages/Module3Page';
 import type { IMFProgress, LearningModule } from './types/curriculum';
 import { LEARNING_MODULES } from './data/curriculumData';
 import {
@@ -212,6 +213,7 @@ export const App: React.FC = () => {
       />
       <Route path="/module-1" element={<Module1Page />} />
       <Route path="/module-2" element={<Module2Page />} />
+      <Route path="/module-3" element={<Module3Page />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

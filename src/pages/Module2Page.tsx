@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import WaterOilSimulation from '../components/WaterOilSimulation';
@@ -14,9 +14,15 @@ import './Module1Page.css';
 
 const Module2Page: React.FC = () => {
     const navigate = useNavigate();
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const handleBack = () => {
         navigate('/');
+    };
+    const handleNext = () => {
+        navigate('/module-3');
     };
 
     return (
@@ -107,9 +113,13 @@ const Module2Page: React.FC = () => {
                     <button onClick={handleBack}>
                         ← Kembali ke Beranda
                     </button>
+
+                    <button onClick={handleNext}>
+                        Lanjut ke Modul 3: Gaya London →
+                    </button>
+
                     <span>IMF Explorer · Pembelajaran Kimia</span>
                 </div>
-
             </main>
         </div>
     );
