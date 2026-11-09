@@ -18,13 +18,15 @@ import { PrerequisitesSection } from './components/PrerequisitesSection';
 import { PedagogyBanner } from './components/PedagogyBanner';
 import { Footer } from './components/Footer';
 import { ResetConfirmModal } from './components/ResetConfirmModal';
-import { ModuleDetailModal } from './components/ModuleDetailModal';
+
+// Pages
+import { UniversalModulePage } from './pages/UniversalModulePage';
+import { EvaluatePlaceholderPage } from './pages/EvaluatePlaceholderPage';
 
 export const App: React.FC = () => {
   const [progress, setProgress] = useState<IMFProgress>(() => getSavedProgress());
+  const [currentView, setCurrentView] = useState<string>('home'); // 'home' | moduleId
   const [isResetModalOpen, setIsResetModalOpen] = useState<boolean>(false);
-  const [selectedModule, setSelectedModule] = useState<LearningModule | null>(null);
-  const [isModuleModalOpen, setIsModuleModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -34,28 +36,44 @@ export const App: React.FC = () => {
     }, 3500);
   };
 
+  // Navigate to any module
+  const handleNavigateModule = (targetModuleId: string) => {
+    if (targetModuleId === 'evaluasi-akhir') {
+      setCurrentView('evaluasi-akhir');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const mod = LEARNING_MODULES.find((m) => m.id === targetModuleId);
+    setCurrentView(targetModuleId);
+    const updated = updateLastPage(targetModuleId);
+    setProgress(updated);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(`Membuka pembelajaran: ${mod ? mod.title : targetModuleId}`);
+  };
+
   // Launch or resume learning from CTA
   const handleStartOrResume = () => {
     const targetModuleId = progress.lastPage || LEARNING_MODULES[0].id;
-    const targetMod = LEARNING_MODULES.find((m) => m.id === targetModuleId) || LEARNING_MODULES[0];
-    setSelectedModule(targetMod);
-    setIsModuleModalOpen(true);
-    updateLastPage(targetMod.id);
+    if (targetModuleId === 'evaluasi-akhir') {
+      handleNavigateModule('fenomena-air-minyak');
+    } else {
+      handleNavigateModule(targetModuleId);
+    }
   };
 
-  // Select module from roadmap or overview
+  // Open module from Roadmap or Overview
   const handleOpenModule = (mod: LearningModule) => {
-    setSelectedModule(mod);
-    setIsModuleModalOpen(true);
-    const updated = updateLastPage(mod.id);
-    setProgress(updated);
+    if (mod.id === 'evaluasi-akhir') {
+      setCurrentView('evaluasi-akhir');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      handleNavigateModule(mod.id);
+    }
   };
 
   const handleSelectModuleById = (moduleId: string) => {
-    const mod = LEARNING_MODULES.find((m) => m.id === moduleId);
-    if (mod) {
-      handleOpenModule(mod);
-    }
+    handleNavigateModule(moduleId);
   };
 
   // Toggle completion of a module
@@ -84,16 +102,9 @@ export const App: React.FC = () => {
     const fresh = resetProgress();
     setProgress(fresh);
     setIsResetModalOpen(false);
+    setCurrentView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     showToast('Progres pembelajaran berhasil diatur ulang ke awal.');
-  };
-
-  // Launch module action
-  const handleLaunchModule = (moduleId: string) => {
-    const mod = LEARNING_MODULES.find((m) => m.id === moduleId);
-    setIsModuleModalOpen(false);
-    const updated = updateLastPage(moduleId);
-    setProgress(updated);
-    showToast(`Membuka pembelajaran: ${mod ? mod.title : moduleId}`);
   };
 
   return (
@@ -124,63 +135,86 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Header & Navbar */}
+      {/* Global Navbar */}
       <Navbar
         progress={progress}
+        currentView={currentView}
+        onNavigateHome={() => {
+          setCurrentView('home');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onOpenResetModal={() => setIsResetModalOpen(true)}
         onStartLearning={handleStartOrResume}
       />
 
-      <main>
-        {/* Hero Section */}
-        <HeroSection
-          progress={progress}
-          onStartLearning={handleStartOrResume}
-        />
-
-        {/* Learning Progress Card */}
-        <div className="content-wrapper">
-          <ProgressCard
+      {/* Conditional View Routing: Home vs Evaluate vs UniversalModulePage */}
+      {currentView === 'home' && (
+        <main>
+          {/* Hero Section */}
+          <HeroSection
             progress={progress}
-            onOpenResetModal={() => setIsResetModalOpen(true)}
-            onResumeModule={handleSelectModuleById}
+            onStartLearning={handleStartOrResume}
           />
-        </div>
 
-        {/* 3 Intermolecular Forces Overview */}
-        <IMFOverview onSelectIMF={handleSelectModuleById} />
+          {/* Learning Progress Card */}
+          <div className="content-wrapper">
+            <ProgressCard
+              progress={progress}
+              onOpenResetModal={() => setIsResetModalOpen(true)}
+              onResumeModule={handleSelectModuleById}
+            />
+          </div>
 
-        {/* 5E Learning Roadmap */}
-        <LearningRoadmap
-          progress={progress}
-          onOpenModule={handleOpenModule}
+          {/* 3 Intermolecular Forces Overview */}
+          <IMFOverview onSelectIMF={handleSelectModuleById} />
+
+          {/* 5E Learning Roadmap */}
+          <LearningRoadmap
+            progress={progress}
+            onOpenModule={handleOpenModule}
+            onToggleComplete={handleToggleComplete}
+          />
+
+          {/* Prerequisites Refresher */}
+          <PrerequisitesSection />
+
+          {/* Pedagogical Framework Banner */}
+          <PedagogyBanner />
+        </main>
+      )}
+
+      {currentView === 'evaluasi-akhir' && (
+        <EvaluatePlaceholderPage
+          onBackToHome={() => {
+            setCurrentView('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenElaborate={() => handleNavigateModule('perbandingan-gaya')}
+        />
+      )}
+
+      {currentView !== 'home' && currentView !== 'evaluasi-akhir' && (
+        <UniversalModulePage
+          key={currentView}
+          moduleId={currentView}
+          onNavigateHome={() => {
+            setCurrentView('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onNavigateModule={handleNavigateModule}
+          completedPages={progress.completedPages}
           onToggleComplete={handleToggleComplete}
         />
+      )}
 
-        {/* Prerequisites Refresher */}
-        <PrerequisitesSection />
-
-        {/* Pedagogical Framework Banner */}
-        <PedagogyBanner />
-      </main>
-
-      {/* Footer */}
+      {/* Global Footer */}
       <Footer onSelectModule={handleSelectModuleById} />
 
-      {/* Modals */}
+      {/* Reset Confirmation Modal */}
       <ResetConfirmModal
         isOpen={isResetModalOpen}
         onClose={() => setIsResetModalOpen(false)}
         onConfirmReset={handleConfirmReset}
-      />
-
-      <ModuleDetailModal
-        module={selectedModule}
-        isOpen={isModuleModalOpen}
-        isCompleted={selectedModule ? progress.completedPages.includes(selectedModule.id) : false}
-        onClose={() => setIsModuleModalOpen(false)}
-        onLaunchModule={handleLaunchModule}
-        onToggleCompleted={handleToggleComplete}
       />
     </div>
   );
