@@ -1,25 +1,117 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Module1Page.css';
+import './Module3Page.css';
+
+type SectionId =
+    | 'overview'
+    | 'mechanism'
+    | 'polarizability'
+    | 'factors'
+    | 'properties'
+    | 'summary'
+    | 'references';
+
+const sections: { id: SectionId; number: string; label: string }[] = [
+    { id: 'overview', number: '01', label: 'Pengertian' },
+    { id: 'mechanism', number: '02', label: 'Mekanisme' },
+    { id: 'polarizability', number: '03', label: 'Polarisabilitas' },
+    { id: 'factors', number: '04', label: 'Faktor kekuatan' },
+    { id: 'properties', number: '05', label: 'Sifat fisik' },
+    { id: 'summary', number: '06', label: 'Rangkuman' },
+    { id: 'references', number: '07', label: 'Referensi' },
+];
+
+const mechanismSteps = [
+    {
+        title: 'Distribusi elektron berubah sesaat',
+        description:
+            'Elektron terus bergerak. Pada suatu saat, distribusinya dapat menjadi tidak merata sehingga salah satu sisi partikel memiliki kerapatan elektron lebih besar.',
+        detail:
+            'Ketidakmerataan distribusi elektron ini berlangsung sementara dan dapat terjadi meskipun atom atau molekul tidak memiliki dipol permanen.',
+    },
+    {
+        title: 'Terbentuk dipol sesaat',
+        description:
+            'Sisi yang memiliki kerapatan elektron lebih besar menjadi relatif negatif (δ−), sedangkan sisi yang kekurangan kerapatan elektron menjadi relatif positif (δ+).',
+        detail:
+            'Pemisahan muatan parsial sementara tersebut disebut dipol sesaat (instantaneous dipole).',
+    },
+    {
+        title: 'Terbentuk dipol terinduksi',
+        description:
+            'Dipol sesaat menghasilkan medan listrik yang memengaruhi distribusi elektron partikel di dekatnya. Awan elektron partikel kedua mengalami distorsi sehingga terbentuk dipol terinduksi.',
+        detail:
+            'Sisi partikel kedua yang menghadap sisi δ− dari partikel pertama menjadi relatif δ+.',
+    },
+    {
+        title: 'Kedua partikel saling tarik-menarik',
+        description:
+            'Muatan parsial yang berlawanan pada kedua partikel saling tarik-menarik. Interaksi ini merupakan gaya dispersi London.',
+        detail:
+            'Dipol-dipol tersebut bersifat sementara dan terus berubah, tetapi interaksi dispersinya tetap dapat terjadi.',
+    },
+];
 
 const Module3Page: React.FC = () => {
     const navigate = useNavigate();
 
+    const [activeSection, setActiveSection] =
+        useState<SectionId>('overview');
+
+    const [mechanismStep, setMechanismStep] = useState(0);
+    const [mechanismAnswer, setMechanismAnswer] =
+        useState<string | null>(null);
+
+    const [polarAnswer, setPolarAnswer] =
+        useState<string | null>(null);
+
+    const activeIndex = sections.findIndex(
+        (section) => section.id === activeSection
+    );
+
     useEffect(() => {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'auto' });
     }, []);
 
-    const handleBack = () => {
-        navigate('/module-2');
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setMechanismStep(0);
+    }, [activeSection]);
+
+    const handleBack = () => navigate('/');
+
+    const goToSection = (id: SectionId) => {
+        setActiveSection(id);
+        setMechanismAnswer(null);
+        setPolarAnswer(null);
+    };
+
+    const goPrevious = () => {
+        if (activeIndex > 0) {
+            goToSection(sections[activeIndex - 1].id);
+        }
+    };
+
+    const goNext = () => {
+        if (activeIndex < sections.length - 1) {
+            goToSection(sections[activeIndex + 1].id);
+        }
     };
 
     return (
-        <div className="lesson-page">
-            {/* Header */}
+        <div className="lesson-page m3-page">
+
+            {/* HEADER */}
             <header className="lesson-header">
                 <div className="lesson-header-inner">
-                    <button className="lesson-brand" onClick={handleBack}>
+
+                    <button
+                        className="lesson-brand"
+                        onClick={handleBack}
+                        aria-label="Kembali ke Beranda"
+                    >
                         <span className="lesson-brand-icon">⚗</span>
                         <span>
                             <strong>IMF Explorer</strong>
@@ -27,15 +119,21 @@ const Module3Page: React.FC = () => {
                         </span>
                     </button>
 
-                    <button className="lesson-back-button" onClick={handleBack}>
-                        ← Kembali ke Modul 2
+                    <button
+                        className="lesson-back-button"
+                        onClick={handleBack}
+                    >
+                        ← Kembali ke Beranda
                     </button>
+
                 </div>
             </header>
 
-            <main className="lesson-main">
-                {/* Hero */}
-                <section className="lesson-hero">
+            <main className="lesson-main m3-main">
+
+                {/* HERO */}
+                <section className="lesson-hero m3-hero">
+
                     <div className="lesson-hero-content">
                         <span className="lesson-eyebrow">
                             TAHAP 3 · EXPLAIN
@@ -44,221 +142,623 @@ const Module3Page: React.FC = () => {
                         <h1>Gaya London (Gaya Dispersi)</h1>
 
                         <p className="lesson-hero-description">
-                            Bagaimana atom dan molekul nonpolar dapat saling
-                            tarik-menarik? Temukan jawabannya melalui
-                            pembentukan dipol sesaat dan dipol terinduksi.
+                            Bagaimana partikel yang tidak memiliki kutub
+                            permanen tetap dapat saling tarik-menarik?
+                            Pelajari pembentukan dipol sesaat dan
+                            dipol terinduksi.
                         </p>
 
                         <div className="lesson-meta">
-                            <span>📖 Materi Pembelajaran</span>
-                            <span>⚛️ Konsep Submikroskopik</span>
-                            <span>⏱ 10 menit</span>
+                            <span>📖 Materi pembelajaran</span>
+                            <span>⚛️ Konsep submikroskopik</span>
+                            <span>⏱ ±10–15 menit</span>
                         </div>
                     </div>
 
-                    <div className="lesson-hero-decoration">
-                        <span className="lesson-molecule">He</span>
-                        <span className="lesson-molecule-small">δ+ δ−</span>
-                        <span className="lesson-decoration-caption">
-                            Dipol sesaat dan terinduksi
-                        </span>
+                    <div className="m3-hero-visual" aria-hidden="true">
+                        <div className="m3-hero-orbit">
+                            <span>δ−</span>
+                            <strong>e⁻</strong>
+                            <span>δ+</span>
+                        </div>
+                        <small>Distribusi elektron</small>
                     </div>
+
                 </section>
 
-                {/* Konsep Utama */}
-                <section className="lesson-concept">
-                    <div className="lesson-concept-icon">💡</div>
+                {/* GAGASAN UTAMA */}
+                <div className="m3-intro-note">
+                    <span className="m3-note-icon">💡</span>
                     <div>
-                        <span className="lesson-section-label">
-                            KONSEP UTAMA
-                        </span>
+                        <strong>Gagasan utama</strong>
                         <p>
-                            Gaya dispersi London merupakan gaya tarik-menarik
-                            yang timbul akibat dipol sesaat yang menginduksi
-                            dipol pada atom atau molekul di sekitarnya.
-                            Gaya ini terjadi pada semua atom dan molekul,
-                            baik polar maupun nonpolar.
+                            Gaya dispersi London berkaitan dengan dipol
+                            sesaat yang dapat menginduksi dipol pada
+                            partikel di dekatnya. Gaya dispersi terdapat
+                            pada semua atom dan molekul, baik polar
+                            maupun nonpolar (Chang &amp; Goldsby, 2010,
+                            Bab 11.2).
                         </p>
                     </div>
-                </section>
+                </div>
 
-                {/* Materi */}
-                <section className="lesson-content">
-                    <div className="lesson-content-heading">
-                        <span className="lesson-section-label">
-                            MATERI PEMBELAJARAN
-                        </span>
-                        <h2>Memahami Gaya Dispersi London</h2>
-                        <p>
-                            Pelajari proses terbentuknya gaya London dan
-                            faktor-faktor yang memengaruhi kekuatannya.
-                        </p>
+                {/* NAVIGASI BAGIAN */}
+                <nav
+                    className="m3-section-nav"
+                    aria-label="Navigasi materi Modul 3"
+                >
+                    <div className="m3-nav-heading">
+                        <span>JELAJAHI MATERI</span>
+                        <small>
+                            Pilih bagian untuk membuka pembahasan
+                        </small>
                     </div>
 
-                    <div className="lesson-section-list">
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">01</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    KONSEP DASAR
-                                </div>
-                                <h3>Mengapa Molekul Nonpolar Dapat Saling Menarik?</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Molekul nonpolar tidak mempunyai momen
-                                        dipol permanen. Namun, elektron selalu
-                                        bergerak sehingga distribusi elektron
-                                        pada suatu saat dapat menjadi tidak merata.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Ketidakmerataan tersebut menghasilkan
-                                        dipol sesaat. Dipol ini dapat memengaruhi
-                                        distribusi elektron partikel lain di
-                                        dekatnya sehingga terbentuk gaya tarik
-                                        antarp­artikel yang disebut gaya dispersi
-                                        London.
-                                    </p>
+                    <div className="m3-nav-items">
+                        {sections.map((section) => (
+                            <button
+                                key={section.id}
+                                className={`m3-nav-item ${activeSection === section.id
+                                    ? 'active'
+                                    : ''
+                                    }`}
+                                onClick={() =>
+                                    goToSection(section.id)
+                                }
+                                aria-current={
+                                    activeSection === section.id
+                                        ? 'step'
+                                        : undefined
+                                }
+                            >
+                                <span>{section.number}</span>
+                                {section.label}
+                            </button>
+                        ))}
+                    </div>
+                </nav>
+
+                {/* PROGRES MATERI */}
+                <div className="m3-progress-line">
+                    <span>
+                        Bagian {activeIndex + 1} dari {sections.length}
+                    </span>
+                    <span>
+                        {Math.round(
+                            ((activeIndex + 1) / sections.length) * 100
+                        )}% materi
+                    </span>
+                </div>
+
+                {/* KONTEN: HANYA BAGIAN AKTIF YANG DITAMPILKAN */}
+                <div
+                    className="m3-page-content"
+                    key={activeSection}
+                >
+
+                    {/* 01. PENGERTIAN */}
+                    {activeSection === 'overview' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    01 · KONSEP DASAR
+                                </span>
+
+                                <h2>Mengenal Gaya London</h2>
+
+                                <p>
+                                    Partikel tidak harus memiliki kutub
+                                    permanen untuk dapat saling
+                                    tarik-menarik.
+                                </p>
+                            </div>
+
+                            <div className="m3-content-card">
+                                <h3>Mengapa gaya ini dapat terjadi?</h3>
+
+                                <p>
+                                    Elektron dalam atom atau molekul
+                                    bergerak dan distribusinya dapat
+                                    berubah dari waktu ke waktu. Pada
+                                    suatu saat, distribusi elektron
+                                    mungkin tidak merata. Ketidakmerataan
+                                    sementara ini menghasilkan dipol
+                                    sesaat yang dapat memengaruhi partikel
+                                    di sekitarnya (Chang &amp; Goldsby,
+                                    2010, Bab 11.2).
+                                </p>
+
+                                <p>
+                                    Gaya tarik yang berkaitan dengan
+                                    dipol sesaat dan dipol terinduksi ini
+                                    disebut gaya dispersi London. Gaya
+                                    ini tidak hanya terjadi pada molekul
+                                    nonpolar; molekul polar juga memiliki
+                                    kontribusi gaya dispersi (Flowers
+                                    et al., 2019, bagian 10.1).
+                                </p>
+
+                                <div className="m3-highlight-line">
+                                    <strong>Ingat:</strong> Gaya London
+                                    merupakan salah satu jenis gaya
+                                    antarmolekul yang berasal dari
+                                    fluktuasi distribusi elektron.
                                 </div>
                             </div>
-                        </article>
+                        </section>
+                    )}
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">02</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    MEKANISME PEMBENTUKAN
+                    {/* 02. MEKANISME */}
+                    {activeSection === 'mechanism' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    02 · MEKANISME PEMBENTUKAN
+                                </span>
+
+                                <h2>
+                                    Bagaimana Gaya London Terbentuk?
+                                </h2>
+
+                                <p>
+                                    Tekan tombol tahap berikutnya untuk
+                                    mengamati mekanismenya satu per satu.
+                                </p>
+                            </div>
+
+                            <div className="m3-content-card">
+
+                                <div className="m3-mechanism-stepper">
+
+                                    {/* INDIKATOR TAHAP */}
+                                    <div className="m3-step-indicators">
+                                        {mechanismSteps.map(
+                                            (step, index) => (
+                                                <button
+                                                    key={step.title}
+                                                    className={`m3-step-dot ${mechanismStep === index
+                                                        ? 'active'
+                                                        : ''
+                                                        } ${mechanismStep > index
+                                                            ? 'completed'
+                                                            : ''
+                                                        }`}
+                                                    onClick={() =>
+                                                        setMechanismStep(index)
+                                                    }
+                                                    aria-label={`Tampilkan tahap ${index + 1}`}
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+
+                                    {/* ILUSTRASI MEKANISME */}
+                                    <div
+                                        className={`m3-mechanism-visual step-${mechanismStep + 1}`}
+                                        aria-label={`Ilustrasi tahap ${mechanismStep + 1}`}
+                                    >
+                                        <div className="m3-visual-particle m3-visual-particle-one">
+                                            <span className="m3-electron-cloud" />
+
+                                            <span className="m3-charge m3-left-charge">
+                                                {mechanismStep === 0 ? '?' : 'δ+'}
+                                            </span>
+
+                                            <span className="m3-charge m3-right-charge">
+                                                {mechanismStep === 0 ? '?' : 'δ−'}
+                                            </span>
+
+                                            <b>Partikel 1</b>
+                                        </div>
+
+                                        <div className="m3-visual-interaction">
+                                            {mechanismStep >= 2 && '············'}
+
+                                            {mechanismStep === 3 && (
+                                                <strong>
+                                                    Tarik-menarik
+                                                </strong>
+                                            )}
+                                        </div>
+
+                                        <div className="m3-visual-particle m3-visual-particle-two">
+                                            <span className="m3-electron-cloud" />
+
+                                            <span className="m3-charge m3-left-charge">
+                                                {mechanismStep >= 2 ? 'δ+' : '?'}
+                                            </span>
+
+                                            <span className="m3-charge m3-right-charge">
+                                                {mechanismStep >= 2 ? 'δ−' : '?'}
+                                            </span>
+
+                                            <b>Partikel 2</b>
+                                        </div>
+                                    </div>
+
+                                    {/* PENJELASAN SETIAP TAHAP */}
+                                    <div
+                                        className="m3-step-explanation"
+                                        aria-live="polite"
+                                    >
+                                        <span className="m3-kicker">
+                                            TAHAP {mechanismStep + 1} DARI 4
+                                        </span>
+
+                                        <h3>
+                                            {mechanismSteps[mechanismStep].title}
+                                        </h3>
+
+                                        <p>
+                                            {mechanismSteps[mechanismStep].description}
+                                        </p>
+
+                                        <div className="m3-highlight-line">
+                                            {mechanismSteps[mechanismStep].detail}
+                                        </div>
+
+                                        <p className="m3-citation-inline">
+                                            Sumber konsep: Chang &amp;
+                                            Goldsby (2010, Bab 11.2);
+                                            Flowers et al. (2019,
+                                            bagian 10.1).
+                                        </p>
+                                    </div>
+
+                                    {/* TOMBOL TAHAP */}
+                                    <div className="m3-step-controls">
+                                        <button
+                                            className="m3-step-control secondary"
+                                            onClick={() =>
+                                                setMechanismStep(
+                                                    (step) =>
+                                                        Math.max(0, step - 1)
+                                                )
+                                            }
+                                            disabled={mechanismStep === 0}
+                                        >
+                                            ← Tahap sebelumnya
+                                        </button>
+
+                                        <button
+                                            className="m3-step-control"
+                                            onClick={() =>
+                                                setMechanismStep(
+                                                    (step) =>
+                                                        Math.min(3, step + 1)
+                                                )
+                                            }
+                                            disabled={mechanismStep === 3}
+                                        >
+                                            Tahap berikutnya →
+                                        </button>
+                                    </div>
+
+                                    <p className="m3-visual-caption">
+                                        Ilustrasi konseptual, bukan
+                                        gambaran skala atau lintasan
+                                        elektron yang sebenarnya.
+                                        Elektron tidak berpindah
+                                        seluruhnya dari satu partikel
+                                        ke partikel lain.
+                                    </p>
+
                                 </div>
-                                <h3>Dipol Sesaat (Instantaneous Dipole)</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Elektron dalam atom atau molekul
-                                        bergerak secara terus-menerus.
-                                        Pada suatu saat, elektron dapat
-                                        terkumpul lebih banyak di salah satu
-                                        sisi sehingga distribusi muatannya
-                                        menjadi tidak simetris.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Sisi yang memiliki kerapatan elektron
-                                        lebih besar menjadi bermuatan parsial
-                                        negatif (δ−), sedangkan sisi lainnya
-                                        menjadi bermuatan parsial positif (δ+).
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Dipol ini disebut dipol sesaat karena
-                                        hanya berlangsung dalam waktu yang
-                                        sangat singkat. Pergerakan elektron
-                                        berikutnya dapat menghasilkan susunan
-                                        dipol yang berbeda.
-                                    </p>
+
+                                {/* CEK PEMAHAMAN */}
+                                <div className="m3-check-card">
+                                    <span className="m3-kicker">
+                                        CEK PEMAHAMAN
+                                    </span>
+
+                                    <h3>
+                                        Ketika suatu atom membentuk dipol
+                                        sesaat, apa yang dapat terjadi
+                                        pada atom lain di dekatnya?
+                                    </h3>
+
+                                    {[
+                                        [
+                                            'A',
+                                            'Atom kedua menerima elektron dari atom pertama.',
+                                        ],
+                                        [
+                                            'B',
+                                            'Distribusi elektron atom kedua berubah akibat pengaruh dipol sesaat pada atom pertama.',
+                                        ],
+                                        [
+                                            'C',
+                                            'Atom kedua selalu membentuk dipol permanen.',
+                                        ],
+                                    ].map(([letter, answer]) => (
+                                        <button
+                                            key={letter}
+                                            className={`m3-answer ${mechanismAnswer === letter
+                                                ? 'chosen'
+                                                : ''
+                                                } ${mechanismAnswer &&
+                                                    letter === 'B'
+                                                    ? 'right'
+                                                    : ''
+                                                } ${mechanismAnswer === letter &&
+                                                    letter !== 'B'
+                                                    ? 'wrong'
+                                                    : ''
+                                                }`}
+                                            onClick={() =>
+                                                setMechanismAnswer(letter)
+                                            }
+                                        >
+                                            <b>{letter}</b>
+                                            <span>{answer}</span>
+                                        </button>
+                                    ))}
+
+                                    {mechanismAnswer && (
+                                        <p
+                                            className={`m3-feedback ${mechanismAnswer === 'B'
+                                                ? 'correct'
+                                                : 'incorrect'
+                                                }`}
+                                        >
+                                            {mechanismAnswer === 'B'
+                                                ? 'Tepat! Dipol sesaat dapat mengubah distribusi elektron partikel di dekatnya sehingga terbentuk dipol terinduksi.'
+                                                : 'Belum tepat. Yang berubah adalah distribusi elektron pada partikel tetangga, bukan perpindahan elektron dari satu atom ke atom lain.'}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
-                        </article>
+                        </section>
+                    )}
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">03</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    MEKANISME PEMBENTUKAN
+                    {/* 03. POLARISABILITAS */}
+                    {activeSection === 'polarizability' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    03 · KEMUDAHAN AWAN ELEKTRON BERUBAH
+                                </span>
+
+                                <h2>Polarisabilitas</h2>
+
+                                <p>
+                                    Seberapa mudah awan elektron suatu
+                                    partikel mengalami distorsi?
+                                </p>
+                            </div>
+
+                            <div className="m3-content-card">
+                                <h3>Pengertian polarisabilitas</h3>
+
+                                <p>
+                                    <strong>Polarisabilitas</strong> adalah
+                                    ukuran kemudahan awan elektron dalam
+                                    atom atau molekul mengalami distorsi
+                                    akibat pengaruh medan listrik di
+                                    sekitarnya. Semakin mudah awan
+                                    elektron terdistorsi, semakin besar
+                                    polarisabilitasnya (IUPAC, Gold Book,
+                                    “Polarizability”).
+                                </p>
+
+                                <p>
+                                    Partikel dengan polarisabilitas lebih
+                                    besar cenderung menghasilkan dipol
+                                    terinduksi yang lebih besar, sehingga
+                                    gaya dispersinya cenderung lebih kuat
+                                    apabila dibandingkan dalam kondisi
+                                    yang sebanding (Chang &amp; Goldsby,
+                                    2010, Bab 11.2).
+                                </p>
+
+                                {/* PERBANDINGAN He DAN Xe */}
+                                <div className="m3-comparison">
+                                    <div className="m3-comparison-heading">
+                                        <div>
+                                            <span className="m3-kicker">
+                                                PERBANDINGAN
+                                            </span>
+                                            <h3>
+                                                Helium (He) dan Xenon (Xe)
+                                            </h3>
+                                        </div>
+
+                                        <span className="m3-compare-tag">
+                                            Skema konseptual
+                                        </span>
+                                    </div>
+
+                                    <div className="m3-atom-comparison">
+
+                                        <div className="m3-atom-card">
+                                            <div className="m3-atom he-atom">
+                                                <span>He</span>
+                                            </div>
+
+                                            <strong>Helium</strong>
+
+                                            <p>
+                                                Memiliki dua elektron dan
+                                                awan elektron relatif
+                                                sulit terdistorsi.
+                                            </p>
+
+                                            <small>
+                                                Polarisabilitas lebih rendah
+                                            </small>
+                                        </div>
+
+                                        <div className="m3-atom-card">
+                                            <div className="m3-atom xe-atom">
+                                                <span>Xe</span>
+                                            </div>
+
+                                            <strong>Xenon</strong>
+
+                                            <p>
+                                                Memiliki lebih banyak
+                                                elektron dan awan elektron
+                                                lebih mudah terdistorsi.
+                                            </p>
+
+                                            <small>
+                                                Polarisabilitas lebih tinggi
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                    <p className="m3-visual-caption">
+                                        Perbandingan kualitatif.
+                                        Ukuran ilustrasi tidak menunjukkan
+                                        ukuran atom sebenarnya
+                                        (Chang &amp; Goldsby, 2010,
+                                        Bab 11.2).
+                                    </p>
                                 </div>
-                                <h3>Dipol Terinduksi (Induced Dipole)</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Ketika dipol sesaat terbentuk pada
-                                        suatu atom atau molekul, distribusi
-                                        elektron partikel tetangganya dapat
-                                        mengalami perubahan akibat pengaruh
-                                        gaya elektrostatik.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Perubahan distribusi elektron tersebut
-                                        menghasilkan dipol terinduksi.
-                                        Kutub-kutub yang berlawanan saling
-                                        berdekatan dan menghasilkan gaya tarik.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Dipol sesaat dan dipol terinduksi
-                                        berubah secara terus-menerus. Interaksi
-                                        sementara inilah yang menghasilkan
-                                        gaya dispersi London.
-                                    </p>
+
+                                {/* CEK PEMAHAMAN */}
+                                <div className="m3-check-card">
+                                    <span className="m3-kicker">
+                                        CEK PEMAHAMAN
+                                    </span>
+
+                                    <h3>
+                                        Jika atom A lebih mudah mengalami
+                                        distorsi awan elektron daripada
+                                        atom B, bagaimana kecenderungan
+                                        gaya London pada kondisi yang
+                                        sebanding?
+                                    </h3>
+
+                                    <button
+                                        className={`m3-answer ${polarAnswer === 'A'
+                                            ? 'chosen right'
+                                            : ''
+                                            }`}
+                                        onClick={() => setPolarAnswer('A')}
+                                    >
+                                        <b>A</b>
+                                        <span>
+                                            Atom A cenderung memiliki
+                                            gaya London lebih kuat
+                                            karena polarisabilitasnya
+                                            lebih besar.
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        className={`m3-answer ${polarAnswer === 'B'
+                                            ? 'chosen wrong'
+                                            : ''
+                                            }`}
+                                        onClick={() => setPolarAnswer('B')}
+                                    >
+                                        <b>B</b>
+                                        <span>
+                                            Atom A memiliki gaya London
+                                            lebih lemah karena awan
+                                            elektronnya mudah berubah.
+                                        </span>
+                                    </button>
+
+                                    {polarAnswer && (
+                                        <p
+                                            className={`m3-feedback ${polarAnswer === 'A'
+                                                ? 'correct'
+                                                : 'incorrect'
+                                                }`}
+                                        >
+                                            {polarAnswer === 'A'
+                                                ? 'Benar! Kemudahan awan elektron mengalami distorsi menunjukkan polarisabilitas lebih besar.'
+                                                : 'Coba lagi. Kemudahan awan elektron mengalami distorsi menunjukkan polarisabilitas lebih besar.'}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
-                        </article>
+                        </section>
+                    )}
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">04</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    FAKTOR YANG MEMENGARUHI
-                                </div>
-                                <h3>Polarisabilitas (Polarizability)</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Polarisabilitas adalah kemudahan
-                                        distribusi elektron dalam atom atau
-                                        molekul untuk mengalami perubahan
-                                        akibat pengaruh gaya dari partikel lain.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Semakin mudah awan elektron terdistorsi,
-                                        semakin besar polarisabilitasnya.
-                                        Awan elektron yang lebih menyebar
-                                        dan tidak terlalu kuat ditahan oleh
-                                        inti atom cenderung lebih mudah
-                                        mengalami distorsi.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Dengan demikian, polarisabilitas
-                                        yang lebih besar menghasilkan
-                                        interaksi dispersi yang lebih kuat.
-                                    </p>
-                                </div>
+                    {/* 04. FAKTOR KEKUATAN */}
+                    {activeSection === 'factors' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    04 · FAKTOR YANG MEMENGARUHI
+                                </span>
+
+                                <h2>
+                                    Apa yang Memperkuat Gaya London?
+                                </h2>
+
+                                <p>
+                                    Kekuatan gaya dispersi berkaitan
+                                    dengan karakteristik awan elektron
+                                    dan bentuk molekul.
+                                </p>
                             </div>
-                        </article>
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">05</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    KEKUATAN GAYA LONDON
-                                </div>
-                                <h3>Pengaruh Jumlah Elektron dan Massa Molar</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Gaya dispersi London umumnya meningkat
-                                        seiring bertambahnya massa molar.
-                                        Molekul dengan massa molar lebih besar
-                                        cenderung memiliki lebih banyak elektron
-                                        sehingga awan elektronnya lebih mudah
-                                        mengalami distorsi.
+                            <div className="m3-factor-grid">
+
+                                <article className="m3-factor-card">
+                                    <span className="m3-factor-icon">⚛</span>
+                                    <h3>Jumlah elektron</h3>
+                                    <p>
+                                        Jumlah elektron yang lebih banyak
+                                        umumnya berkaitan dengan awan
+                                        elektron yang lebih mudah
+                                        terdistorsi (Chang &amp;
+                                        Goldsby, 2010, Bab 11.2).
                                     </p>
-                                    <p className="lesson-paragraph">
-                                        Karena itu, semakin besar jumlah elektron
-                                        dan polarisabilitas suatu partikel,
-                                        umumnya semakin kuat gaya dispersinya.
+                                </article>
+
+                                <article className="m3-factor-card">
+                                    <span className="m3-factor-icon">☁</span>
+                                    <h3>Polarisabilitas</h3>
+                                    <p>
+                                        Semakin besar polarisabilitas,
+                                        semakin mudah terbentuk dipol
+                                        terinduksi dan semakin kuat
+                                        gaya dispersi (IUPAC, Gold Book,
+                                        “Polarizability”).
                                     </p>
-                                </div>
+                                </article>
+
+                                <article className="m3-factor-card">
+                                    <span className="m3-factor-icon">◇</span>
+                                    <h3>Bentuk molekul</h3>
+                                    <p>
+                                        Molekul yang lebih memanjang
+                                        dapat memiliki luas permukaan
+                                        kontak lebih besar daripada
+                                        molekul yang lebih kompak dengan
+                                        massa molekul sebanding
+                                        (Flowers et al., 2019,
+                                        bagian 10.1).
+                                    </p>
+                                </article>
+
                             </div>
-                        </article>
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">06</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    CONTOH DAN PERBANDINGAN
-                                </div>
-                                <h3>Perbandingan Senyawa Nonpolar</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Raymond Chang memberikan contoh
-                                        perbandingan titik leleh beberapa
-                                        senyawa nonpolar berikut.
-                                        Peningkatan jumlah elektron diikuti
-                                        oleh peningkatan kekuatan gaya dispersi.
-                                    </p>
+                            <div className="m3-content-card">
+                                <h3>Contoh data senyawa nonpolar</h3>
 
-                                    <table>
+                                <p>
+                                    Tabel berikut menunjukkan jumlah
+                                    elektron dan titik leleh beberapa
+                                    senyawa nonpolar. Data titik leleh
+                                    dirujuk dari Chang dan Goldsby
+                                    (2010, Tabel 11.2).
+                                </p>
+
+                                <div className="m3-table-wrap">
+                                    <table className="m3-data-table">
                                         <thead>
                                             <tr>
                                                 <th>Senyawa</th>
@@ -266,6 +766,7 @@ const Module3Page: React.FC = () => {
                                                 <th>Titik leleh (°C)</th>
                                             </tr>
                                         </thead>
+
                                         <tbody>
                                             <tr>
                                                 <td>CH₄</td>
@@ -294,87 +795,348 @@ const Module3Page: React.FC = () => {
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
 
-                                    <p className="lesson-paragraph">
-                                        Data tersebut menunjukkan bahwa
-                                        semakin banyak elektron, umumnya
-                                        semakin kuat gaya dispersi yang
-                                        bekerja di antara molekul-molekulnya.
-                                        Akibatnya, diperlukan energi lebih
-                                        besar untuk memisahkan molekul,
-                                        sehingga titik lelehnya meningkat.
-                                    </p>
+                                <p className="m3-citation-inline">
+                                    Sumber data: Chang &amp; Goldsby
+                                    (2010, Tabel 11.2). Jumlah elektron
+                                    dihitung dari jumlah elektron atom
+                                    penyusunnya.
+                                </p>
+
+                                <div className="m3-highlight-line">
+                                    <strong>Perhatikan:</strong> Jangan
+                                    menyimpulkan bahwa titik leleh hanya
+                                    ditentukan oleh gaya London. Titik
+                                    leleh juga dipengaruhi susunan dan
+                                    kemasan partikel dalam kristal.
                                 </div>
                             </div>
-                        </article>
+                        </section>
+                    )}
 
-                        <article className="lesson-section-card">
-                            <div className="lesson-section-number">07</div>
-                            <div className="lesson-section-body">
-                                <div className="lesson-section-topline">
-                                    PENERAPAN KONSEP
-                                </div>
-                                <h3>Gaya London pada Semua Partikel</h3>
-                                <div className="lesson-text">
-                                    <p className="lesson-paragraph">
-                                        Gaya dispersi tidak hanya terjadi
-                                        pada molekul nonpolar. Gaya ini juga
-                                        terdapat pada molekul polar dan bahkan
-                                        spesies bermuatan.
-                                    </p>
-                                    <p className="lesson-paragraph">
-                                        Sebagai contoh, CCl₄ merupakan molekul
-                                        nonpolar, tetapi mempunyai titik didih
-                                        lebih tinggi daripada CH₃F yang
-                                        merupakan molekul polar. Hal ini
-                                        menunjukkan bahwa gaya dispersi pada
-                                        CCl₄ dapat lebih kuat daripada
-                                        gabungan gaya dispersi dan
-                                        dipol-dipol pada CH₃F.
-                                    </p>
+                    {/* 05. SIFAT FISIK */}
+                    {activeSection === 'properties' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    05 · HUBUNGAN DENGAN SIFAT FISIK
+                                </span>
+
+                                <h2>
+                                    Pengaruh Gaya London terhadap
+                                    Sifat Zat
+                                </h2>
+
+                                <p>
+                                    Gaya tarik antarmolekul ikut
+                                    menentukan energi yang diperlukan
+                                    untuk memisahkan partikel.
+                                </p>
+                            </div>
+
+                            <div className="m3-property-grid">
+
+                                <article className="m3-property-card">
+                                    <div className="m3-property-symbol">
+                                        🌡️
+                                    </div>
+
+                                    <div>
+                                        <h3>Titik didih</h3>
+
+                                        <p>
+                                            Jika gaya London menjadi
+                                            faktor dominan, gaya dispersi
+                                            yang lebih kuat umumnya
+                                            membuat lebih banyak energi
+                                            diperlukan untuk memisahkan
+                                            molekul ke fase gas.
+                                            Akibatnya, titik didih
+                                            cenderung lebih tinggi
+                                            (Flowers et al., 2019,
+                                            bagian 10.1).
+                                        </p>
+                                    </div>
+                                </article>
+
+                                <article className="m3-property-card">
+                                    <div className="m3-property-symbol">
+                                        💨
+                                    </div>
+
+                                    <div>
+                                        <h3>Volatilitas</h3>
+
+                                        <p>
+                                            Zat dengan gaya tarik
+                                            antarmolekul lebih kuat
+                                            cenderung lebih sulit
+                                            menguap. Karena itu,
+                                            volatilitasnya umumnya
+                                            lebih rendah (Flowers
+                                            et al., 2019, bagian 10.1).
+                                        </p>
+                                    </div>
+                                </article>
+
+                            </div>
+
+                            <div className="m3-content-card">
+                                <h3>
+                                    Contoh: kecenderungan titik didih alkana
+                                </h3>
+
+                                <p>
+                                    Pada deret alkana rantai lurus,
+                                    ukuran molekul dan jumlah elektronnya
+                                    meningkat dari etana ke propana lalu
+                                    butana. Gaya dispersi antarmolekul
+                                    juga cenderung meningkat sehingga
+                                    titik didihnya meningkat
+                                    (Chang &amp; Goldsby, 2010;
+                                    Flowers et al., 2019, bagian 10.1).
+                                </p>
+
+                                <div className="m3-highlight-line">
+                                    Hubungan ini merupakan kecenderungan
+                                    umum untuk membandingkan zat dalam
+                                    kondisi yang sesuai. Jika jenis gaya
+                                    antarmolekul lain berbeda, pengaruhnya
+                                    juga harus dipertimbangkan.
                                 </div>
                             </div>
-                        </article>
-                    </div>
-                </section>
+                        </section>
+                    )}
 
-                {/* Ringkasan */}
-                <section className="lesson-concept">
-                    <div className="lesson-concept-icon">📌</div>
-                    <div>
-                        <span className="lesson-section-label">
-                            RANGKUMAN
-                        </span>
-                        <p>
-                            Gaya London terbentuk melalui dipol sesaat
-                            yang menginduksi dipol pada partikel tetangga.
-                            Kekuatannya dipengaruhi oleh polarisabilitas
-                            dan jumlah elektron. Gaya ini terdapat pada
-                            semua atom dan molekul, baik polar maupun nonpolar.
-                        </p>
-                    </div>
-                </section>
+                    {/* 06. RANGKUMAN */}
+                    {activeSection === 'summary' && (
+                        <section className="m3-section m3-active-section">
 
-                {/* Referensi */}
-                <section className="lesson-content">
-                    <div className="lesson-citation">
-                        <span>📚</span>
-                        <span>
-                            <strong>Sumber referensi</strong>
-                            Chang, R., & Goldsby, K. (2010).
-                            <em> Chemistry </em> (10th ed.).
-                            McGraw-Hill Education. Bab 11.2,
-                            halaman 464–466.
-                        </span>
-                    </div>
-                </section>
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    06 · RANGKUMAN
+                                </span>
 
-                {/* Navigasi bawah */}
+                                <h2>Apa yang Sudah Kamu Pelajari?</h2>
+
+                                <p>
+                                    Empat gagasan utama dari materi
+                                    Gaya London.
+                                </p>
+                            </div>
+
+                            <div className="m3-summary-grid">
+
+                                <article className="m3-summary-card">
+                                    <span>01</span>
+                                    <h3>Apa itu Gaya London?</h3>
+                                    <p>
+                                        Gaya tarik antarp partikel yang
+                                        berkaitan dengan dipol sesaat
+                                        dan dipol terinduksi
+                                        (Chang &amp; Goldsby, 2010).
+                                    </p>
+                                </article>
+
+                                <article className="m3-summary-card">
+                                    <span>02</span>
+                                    <h3>Bagaimana terbentuknya?</h3>
+                                    <p>
+                                        Distribusi elektron berubah
+                                        sesaat, lalu memengaruhi
+                                        distribusi elektron partikel
+                                        di dekatnya (Flowers et al., 2019).
+                                    </p>
+                                </article>
+
+                                <article className="m3-summary-card">
+                                    <span>03</span>
+                                    <h3>
+                                        Apa yang memengaruhi kekuatannya?
+                                    </h3>
+                                    <p>
+                                        Polarisabilitas, jumlah elektron,
+                                        serta bentuk dan luas permukaan
+                                        kontak molekul
+                                        (Chang &amp; Goldsby, 2010).
+                                    </p>
+                                </article>
+
+                                <article className="m3-summary-card">
+                                    <span>04</span>
+                                    <h3>
+                                        Apa pengaruhnya terhadap sifat zat?
+                                    </h3>
+                                    <p>
+                                        Gaya dispersi yang lebih kuat
+                                        umumnya berkaitan dengan titik
+                                        didih lebih tinggi dan volatilitas
+                                        lebih rendah (Flowers et al., 2019).
+                                    </p>
+                                </article>
+
+                            </div>
+                        </section>
+                    )}
+
+                    {/* 07. REFERENSI */}
+                    {activeSection === 'references' && (
+                        <section className="m3-section m3-active-section">
+
+                            <div className="m3-section-heading">
+                                <span className="m3-kicker">
+                                    07 · SUMBER BELAJAR
+                                </span>
+
+                                <h2>Referensi</h2>
+
+                                <p>
+                                    Daftar sumber yang dirujuk pada
+                                    penjelasan materi.
+                                </p>
+                            </div>
+
+                            <div className="m3-reference-list">
+
+                                <article className="m3-reference-card">
+                                    <span>📘</span>
+                                    <div>
+                                        <strong>Referensi utama</strong>
+                                        <p>
+                                            Chang, R., &amp; Goldsby,
+                                            K. A. (2010).
+                                            <em> Chemistry</em> (10th ed.).
+                                            McGraw-Hill. Bab 11.2.
+                                        </p>
+                                    </div>
+                                </article>
+
+                                <article className="m3-reference-card">
+                                    <span>📗</span>
+                                    <div>
+                                        <strong>Referensi pendukung</strong>
+                                        <p>
+                                            Flowers, P., Theopold, K.,
+                                            Langley, R., &amp; Robinson,
+                                            W. R. (2019).
+                                            <em> Chemistry 2e</em>.
+                                            OpenStax.
+                                            {' '}
+                                            <a
+                                                href="https://openstax.org/details/books/chemistry-2e"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                Buka buku
+                                            </a>.
+                                        </p>
+                                    </div>
+                                </article>
+
+                                <article className="m3-reference-card">
+                                    <span>📙</span>
+                                    <div>
+                                        <strong>Definisi istilah</strong>
+                                        <p>
+                                            International Union of Pure
+                                            and Applied Chemistry.
+                                            <em> Compendium of Chemical
+                                                Terminology (the Gold Book)</em>:
+                                            London forces dan polarizability.
+                                        </p>
+
+                                        <p>
+                                            <a
+                                                href="https://doi.org/10.1351/goldbook.L03617"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                London forces
+                                            </a>
+                                            {' · '}
+                                            <a
+                                                href="https://doi.org/10.1351/goldbook.P04711"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                Polarizability
+                                            </a>
+                                        </p>
+                                    </div>
+                                </article>
+
+                            </div>
+                        </section>
+                    )}
+
+                </div>
+
+
+                {/* NAVIGASI SEBELUMNYA DAN SELANJUTNYA */}
+                <div className="m3-page-navigation">
+
+                    <button
+                        className="m3-step-control secondary"
+                        onClick={goPrevious}
+                        disabled={activeIndex === 0}
+                    >
+                        ← Sebelumnya
+                    </button>
+
+                    <span>
+                        {sections[activeIndex].number} / 07 ·
+                        {' '}
+                        {sections[activeIndex].label}
+                    </span>
+
+                    {activeIndex < sections.length - 1 ? (
+                        <button
+                            className="m3-step-control"
+                            onClick={goNext}
+                        >
+                            Selanjutnya →
+                        </button>
+                    ) : (
+                        <button
+                            className="m3-step-control"
+                            onClick={() => goToSection('overview')}
+                        >
+                            ✓ Selesai Membaca · Kembali ke Awal Modul 3
+                        </button>
+                    )}
+
+                </div>
+
+                {/* LANJUT KE MODUL 4 */}
+                {activeSection === 'references' && (
+                    <div className="m3-next-module">
+                        <div>
+                            <strong>Siap mempelajari gaya antarmolekul berikutnya?</strong>
+                            <p>
+                                Lanjutkan perjalananmu dengan mempelajari
+                                Gaya Dipol-Dipol.
+                            </p>
+                        </div>
+
+                        <button
+                            className="m3-step-control"
+                            onClick={() => navigate('/module-4')}
+                        >
+                            Lanjut ke Modul 4: Gaya Dipol-Dipol →
+                        </button>
+                    </div>
+                )}
+
                 <div className="lesson-bottom-navigation">
                     <button onClick={handleBack}>
-                        ← Kembali ke Modul 2
+                        ← Kembali ke Beranda
                     </button>
-                    <span>IMF Explorer · Pembelajaran Kimia</span>
+
+                    <span>
+                        IMF Explorer · Pembelajaran Kimia
+                    </span>
                 </div>
             </main>
         </div>

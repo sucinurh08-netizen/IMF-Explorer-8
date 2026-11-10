@@ -1,0 +1,1180 @@
+/* =========================================================
+   MODULE 5 - IKATAN HIDROGEN
+   IMF Explorer
+   ========================================================= */
+
+.m5-page {
+    --m5-primary: #39765A;
+    --m5-primary-dark: #245B45;
+    --m5-primary-light: #EAF2E6;
+    --m5-soft: #F4F8F1;
+    --m5-cream: #FAF7ED;
+    --m5-text: #27352D;
+    --m5-muted: #647267;
+    --m5-border: #D8E2D5;
+    --m5-orange: #E9A15B;
+    --m5-success: #4C855F;
+    --m5-success-bg: #E8F5EC;
+    --m5-error: #B85C45;
+    --m5-error-bg: #FDEDEA;
+
+    color: var(--m5-text);
+}
+
+.m5-main {
+    padding-bottom: 48px;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.m5-hero {
+    background:
+        radial-gradient(circle at 85% 20%, rgba(168, 195, 160, 0.28), transparent 35%),
+        linear-gradient(135deg, #F2F8F0, #FAF7ED);
+    border: 1px solid var(--m5-border);
+    border-radius: 24px;
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: 35px;
+    overflow: hidden;
+}
+
+.m5-hero h1 {
+    color: var(--m5-primary-dark);
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin: 12px 0 16px;
+    line-height: 1.2;
+}
+
+.m5-hero .lesson-eyebrow {
+    color: var(--m5-primary);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.m5-hero .lesson-hero-description {
+    color: var(--m5-muted);
+    font-size: 1rem;
+    line-height: 1.8;
+    max-width: 600px;
+}
+
+.m5-hero .lesson-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.m5-hero .lesson-meta span {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--m5-border);
+    color: var(--m5-primary-dark);
+    border-radius: 30px;
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* =========================================================
+   HERO MOLECULE VISUAL
+   ========================================================= */
+
+.m5-hero-visual {
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--m5-border);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.m5-water-molecule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--m5-primary-dark);
+    font-weight: 800;
+    font-size: 1.3rem;
+}
+
+.m5-water-molecule strong {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--m5-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.m5-water-molecule span {
+    width: 34px;
+    height: 34px;
+    background: #FFF2E5;
+    color: #A85D24;
+    border: 1px solid #F0C99E;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.m5-water-molecule i {
+    width: 22px;
+    height: 3px;
+    background: #A8C3A0;
+    border-radius: 10px;
+}
+
+.m5-water-molecule.second {
+    transform: translateX(12px);
+}
+
+.m5-hydrogen-dots {
+    color: var(--m5-orange);
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+    font-weight: 800;
+}
+
+.m5-hero-visual small {
+    color: var(--m5-muted);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+/* =========================================================
+   INTRO NOTE
+   ========================================================= */
+
+.m5-intro-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 25px 0;
+    padding: 22px 25px;
+    background: #FFF9E6;
+    border: 1px solid #F0E1A9;
+    border-radius: 16px;
+}
+
+.m5-note-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.m5-intro-note strong {
+    color: var(--m5-primary-dark);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.m5-intro-note p {
+    color: var(--m5-text);
+    font-size: 0.9rem;
+    line-height: 1.75;
+    margin: 0;
+}
+
+/* =========================================================
+   SECTION NAVIGATION
+   ========================================================= */
+
+.m5-section-nav {
+    background: #fff;
+    border: 1px solid var(--m5-border);
+    border-radius: 18px;
+    padding: 22px;
+    margin-top: 28px;
+    box-shadow: 0 4px 12px rgba(36, 91, 69, 0.05);
+}
+
+.m5-nav-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 17px;
+}
+
+.m5-nav-heading>span {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--m5-primary);
+    letter-spacing: 0.08em;
+}
+
+.m5-nav-heading small {
+    color: var(--m5-muted);
+    font-size: 0.82rem;
+}
+
+.m5-nav-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.m5-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 13px;
+    background: #FAFDF9;
+    border: 1px solid var(--m5-border);
+    border-radius: 10px;
+    color: var(--m5-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.m5-nav-item span {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--m5-primary);
+}
+
+.m5-nav-item:hover {
+    background: var(--m5-primary-light);
+    border-color: #A8C3A0;
+    color: var(--m5-primary-dark);
+}
+
+.m5-nav-item.active {
+    background: var(--m5-primary);
+    border-color: var(--m5-primary);
+    color: white;
+}
+
+.m5-nav-item.active span {
+    color: #EAF2E6;
+}
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.m5-progress-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 18px 2px;
+    color: var(--m5-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* =========================================================
+   SECTION CONTENT
+   ========================================================= */
+
+.m5-page-content {
+    min-height: 400px;
+}
+
+.m5-section {
+    animation: m5FadeIn 0.35s ease;
+}
+
+@keyframes m5FadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.m5-section-heading {
+    max-width: 780px;
+    margin: 35px 0 24px;
+}
+
+.m5-kicker {
+    display: inline-block;
+    color: var(--m5-primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+}
+
+.m5-section-heading h2 {
+    color: var(--m5-primary-dark);
+    font-size: clamp(1.55rem, 3vw, 2.15rem);
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.m5-section-heading p {
+    color: var(--m5-muted);
+    line-height: 1.75;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* =========================================================
+   CONTENT CARD
+   ========================================================= */
+
+.m5-content-card {
+    background: #fff;
+    border: 1px solid var(--m5-border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 14px rgba(36, 91, 69, 0.05);
+    margin-bottom: 24px;
+}
+
+.m5-content-card>h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+}
+
+.m5-content-card>p {
+    color: var(--m5-text);
+    line-height: 1.85;
+    font-size: 0.94rem;
+    margin-bottom: 16px;
+}
+
+.m5-subheading {
+    margin-top: 28px;
+    margin-bottom: 16px;
+}
+
+/* =========================================================
+   EXAMPLE GRID
+   ========================================================= */
+
+.m5-example-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.m5-example-card {
+    background: #FAFDF9;
+    border: 1px solid var(--m5-border);
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.m5-example-card:hover {
+    transform: translateY(-3px);
+    border-color: #A8C3A0;
+}
+
+.m5-example-card>span {
+    font-size: 1.6rem;
+}
+
+.m5-example-card h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1rem;
+    margin: 12px 0 8px;
+}
+
+.m5-example-card p {
+    color: var(--m5-muted);
+    font-size: 0.83rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* =========================================================
+   HIGHLIGHT
+   ========================================================= */
+
+.m5-highlight-line {
+    background: var(--m5-primary-light);
+    border-left: 4px solid var(--m5-primary);
+    border-radius: 8px;
+    padding: 16px 19px;
+    color: var(--m5-text);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    margin-top: 22px;
+}
+
+.m5-highlight-line strong {
+    color: var(--m5-primary-dark);
+}
+
+/* =========================================================
+   MECHANISM STEPS
+   ========================================================= */
+
+.m5-step-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 13px;
+    margin-bottom: 28px;
+}
+
+.m5-step-dot {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #F4F8F1;
+    border: 1px solid var(--m5-border);
+    color: var(--m5-muted);
+    font-weight: 800;
+    transition: all 0.2s ease;
+}
+
+.m5-step-dot:hover {
+    border-color: var(--m5-primary);
+}
+
+.m5-step-dot.active {
+    background: var(--m5-primary);
+    border-color: var(--m5-primary);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(57, 118, 90, 0.13);
+}
+
+.m5-step-dot.completed {
+    background: #DDEBDD;
+    color: var(--m5-primary-dark);
+    border-color: #A8C3A0;
+}
+
+/* =========================================================
+   MECHANISM VISUAL
+   ========================================================= */
+
+.m5-mechanism-visual {
+    min-height: 190px;
+    background: radial-gradient(circle at center, #F2F8F0, #FAFDF9);
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 25px 15px;
+    margin-bottom: 25px;
+}
+
+.m5-molecule {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.m5-molecule>i {
+    width: 27px;
+    height: 3px;
+    background: #A8C3A0;
+    border-radius: 10px;
+}
+
+.m5-hydrogen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFF2E5;
+    border: 1px solid #F0C99E;
+    color: #A85D24;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.m5-oxygen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--m5-primary);
+    color: white;
+    border-radius: 50%;
+    width: 58px;
+    height: 58px;
+    font-size: 0.9rem;
+}
+
+.m5-interaction-dots {
+    color: var(--m5-orange);
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    font-weight: 900;
+}
+
+.m5-mechanism-visual.step-1 .m5-molecule {
+    transform: scale(1.05);
+}
+
+.m5-mechanism-visual.step-2 .m5-molecule {
+    transform: scale(1.1);
+}
+
+.m5-mechanism-visual.step-3 .m5-molecule,
+.m5-mechanism-visual.step-4 .m5-molecule {
+    transform: scale(0.95);
+}
+
+.m5-step-explanation {
+    margin: 25px 0;
+}
+
+.m5-step-explanation h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1.2rem;
+    margin: 8px 0 12px;
+}
+
+.m5-step-explanation>p {
+    color: var(--m5-text);
+    line-height: 1.8;
+    font-size: 0.92rem;
+}
+
+.m5-citation-inline {
+    color: var(--m5-muted) !important;
+    font-size: 0.78rem !important;
+    font-style: italic;
+    margin-top: 15px;
+}
+
+.m5-step-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.m5-control {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 11px 19px;
+    background: var(--m5-primary);
+    color: white;
+    border: 1px solid var(--m5-primary);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.m5-control:hover:not(:disabled) {
+    background: var(--m5-primary-dark);
+    border-color: var(--m5-primary-dark);
+    transform: translateY(-2px);
+}
+
+.m5-control.secondary {
+    background: white;
+    color: var(--m5-primary-dark);
+    border-color: var(--m5-border);
+}
+
+.m5-control.secondary:hover:not(:disabled) {
+    background: var(--m5-primary-light);
+    border-color: #A8C3A0;
+}
+
+.m5-control:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.m5-visual-caption {
+    color: var(--m5-muted);
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    margin-top: 20px;
+}
+
+/* =========================================================
+   CEK PEMAHAMAN
+   ========================================================= */
+
+.m5-check-card {
+    background: #FAFDF9;
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+    padding: 23px;
+    margin-top: 30px;
+}
+
+.m5-check-label {
+    display: inline-block;
+    background: #FFF2E5;
+    color: #A85D24;
+    border: 1px solid #F0C99E;
+    border-radius: 30px;
+    padding: 5px 11px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.m5-check-card h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin: 15px 0 18px;
+}
+
+.m5-answer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.m5-answer {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 15px;
+    background: white;
+    border: 1px solid var(--m5-border);
+    border-radius: 12px;
+    color: var(--m5-text);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.m5-answer>span {
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--m5-primary-light);
+    color: var(--m5-primary-dark);
+    border-radius: 50%;
+    font-weight: 800;
+}
+
+.m5-answer:hover {
+    border-color: var(--m5-primary);
+    background: #F7FBF5;
+}
+
+.m5-answer.selected.correct {
+    background: var(--m5-success-bg);
+    border-color: var(--m5-success);
+}
+
+.m5-answer.selected.correct>span {
+    background: var(--m5-success);
+    color: white;
+}
+
+.m5-answer.selected.incorrect {
+    background: var(--m5-error-bg);
+    border-color: var(--m5-error);
+}
+
+.m5-answer.selected.incorrect>span {
+    background: var(--m5-error);
+    color: white;
+}
+
+.m5-feedback {
+    margin-top: 17px;
+    padding: 16px 18px;
+    border-radius: 11px;
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+.m5-feedback.correct {
+    background: var(--m5-success-bg);
+    border: 1px solid #B7D9C0;
+    color: #315D3C;
+}
+
+.m5-feedback.incorrect {
+    background: var(--m5-error-bg);
+    border: 1px solid #EBC2B8;
+    color: #8D4535;
+}
+
+.m5-feedback strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.m5-feedback p {
+    margin: 0;
+}
+
+/* =========================================================
+   REQUIREMENTS
+   ========================================================= */
+
+.m5-requirement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 22px 0;
+}
+
+.m5-requirement-card {
+    background: #FAFDF9;
+    border: 1px solid var(--m5-border);
+    border-radius: 15px;
+    padding: 22px;
+}
+
+.m5-requirement-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--m5-primary-light);
+    color: var(--m5-primary-dark);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.m5-requirement-card h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1.05rem;
+    margin: 14px 0 10px;
+}
+
+.m5-requirement-card p {
+    color: var(--m5-muted);
+    font-size: 0.85rem;
+    line-height: 1.75;
+    margin: 0;
+}
+
+.m5-molecule-examples {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+    margin: 20px 0;
+}
+
+.m5-molecule-example {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 20px 12px;
+    background: #FAFDF9;
+    border: 1px solid var(--m5-border);
+    border-radius: 13px;
+    text-align: center;
+}
+
+.m5-molecule-example strong {
+    color: var(--m5-primary-dark);
+    font-size: 1.5rem;
+}
+
+.m5-molecule-example span {
+    color: var(--m5-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.m5-molecule-example small {
+    color: var(--m5-muted);
+    font-size: 0.75rem;
+}
+
+/* =========================================================
+   FACTOR GRID
+   ========================================================= */
+
+.m5-factor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.m5-factor-card {
+    background: white;
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+    padding: 22px;
+    transition: all 0.2s ease;
+}
+
+.m5-factor-card:hover {
+    transform: translateY(-3px);
+    border-color: #A8C3A0;
+    box-shadow: 0 6px 16px rgba(36, 91, 69, 0.07);
+}
+
+.m5-factor-card>span {
+    font-size: 1.7rem;
+}
+
+.m5-factor-card h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1rem;
+    margin: 13px 0 10px;
+}
+
+.m5-factor-card p {
+    color: var(--m5-muted);
+    font-size: 0.84rem;
+    line-height: 1.75;
+    margin: 0;
+}
+
+/* =========================================================
+   PROPERTY GRID
+   ========================================================= */
+
+.m5-property-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.m5-property-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    background: white;
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.m5-property-card>span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: var(--m5-primary-light);
+    border-radius: 13px;
+    font-size: 1.5rem;
+}
+
+.m5-property-card h3 {
+    color: var(--m5-primary-dark);
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+
+.m5-property-card p {
+    color: var(--m5-muted);
+    font-size: 0.87rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* =========================================================
+   SUMMARY GRID
+   ========================================================= */
+
+.m5-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.m5-summary-card {
+    background: white;
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+    padding: 23px;
+    transition: all 0.2s ease;
+}
+
+.m5-summary-card:hover {
+    transform: translateY(-3px);
+    border-color: #A8C3A0;
+}
+
+.m5-summary-card>span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 37px;
+    height: 37px;
+    background: var(--m5-primary);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.m5-summary-card h3 {
+    color: var(--m5-primary-dark);
+    margin: 13px 0 9px;
+    font-size: 1.05rem;
+}
+
+.m5-summary-card p {
+    color: var(--m5-muted);
+    font-size: 0.86rem;
+    line-height: 1.75;
+    margin: 0;
+}
+
+/* =========================================================
+   REFERENCES
+   ========================================================= */
+
+.m5-reference-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.m5-reference-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px;
+    background: white;
+    border: 1px solid var(--m5-border);
+    border-radius: 15px;
+}
+
+.m5-reference-card>span {
+    font-size: 1.6rem;
+}
+
+.m5-reference-card strong {
+    display: block;
+    color: var(--m5-primary-dark);
+    margin-bottom: 8px;
+}
+
+.m5-reference-card p {
+    color: var(--m5-muted);
+    font-size: 0.86rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.m5-reference-card a {
+    color: var(--m5-primary);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* =========================================================
+   NEXT MODULE
+   ========================================================= */
+
+.m5-next-module {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 28px;
+    padding: 23px 25px;
+    background: #F2F8F0;
+    border: 1px solid var(--m5-border);
+    border-radius: 16px;
+}
+
+.m5-next-module strong {
+    display: block;
+    color: var(--m5-primary-dark);
+    margin-bottom: 6px;
+}
+
+.m5-next-module p {
+    color: var(--m5-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* =========================================================
+   PAGE NAVIGATION
+   ========================================================= */
+
+.m5-page-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 35px;
+    padding: 20px 0;
+    border-top: 1px solid var(--m5-border);
+    border-bottom: 1px solid var(--m5-border);
+}
+
+.m5-page-navigation>span {
+    color: var(--m5-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.m5-page-navigation .m5-control {
+    white-space: nowrap;
+}
+
+.m5-page-navigation .m5-control:disabled {
+    opacity: 0.4;
+}
+
+.m5-page+.lesson-bottom-navigation {
+    margin-top: 20px;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .m5-hero {
+        grid-template-columns: 1fr;
+        padding: 32px;
+    }
+
+    .m5-hero-visual {
+        min-height: 200px;
+    }
+
+    .m5-factor-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .m5-hero {
+        padding: 24px 20px;
+        gap: 24px;
+    }
+
+    .m5-hero h1 {
+        font-size: 2rem;
+    }
+
+    .m5-hero .lesson-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .m5-intro-note {
+        padding: 17px;
+    }
+
+    .m5-section-nav {
+        padding: 17px;
+    }
+
+    .m5-nav-items {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .m5-nav-item {
+        justify-content: flex-start;
+        padding: 10px;
+        font-size: 0.73rem;
+    }
+
+    .m5-content-card {
+        padding: 20px;
+    }
+
+    .m5-example-grid,
+    .m5-factor-grid,
+    .m5-requirement-grid,
+    .m5-molecule-examples,
+    .m5-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .m5-step-controls {
+        flex-direction: column;
+    }
+
+    .m5-step-controls .m5-control {
+        width: 100%;
+    }
+
+    .m5-mechanism-visual {
+        gap: 12px;
+    }
+
+    .m5-molecule {
+        transform: scale(0.85);
+    }
+
+    .m5-interaction-dots {
+        font-size: 0.95rem;
+    }
+
+    .m5-check-card {
+        padding: 17px;
+    }
+
+    .m5-answer {
+        font-size: 0.8rem;
+        padding: 12px;
+    }
+
+    .m5-property-card {
+        padding: 17px;
+    }
+
+    .m5-property-card>span {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .m5-next-module {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .m5-next-module .m5-control {
+        width: 100%;
+    }
+
+    .m5-page-navigation {
+        flex-wrap: wrap;
+    }
+
+    .m5-page-navigation>span {
+        order: -1;
+        width: 100%;
+    }
+
+    .m5-page-navigation .m5-control {
+        flex: 1;
+    }
+}
