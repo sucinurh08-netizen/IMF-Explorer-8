@@ -1,0 +1,572 @@
+/* =====================================
+   MODULE 7 - EVALUATE
+===================================== */
+
+.module7-page {
+    min-height: 100vh;
+    padding: 3rem 1.5rem;
+    background: #f5f8f6;
+    color: #263b32;
+}
+
+.module7-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+
+.module7-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.module7-label {
+    display: inline-block;
+    padding: 0.45rem 1rem;
+    border-radius: 30px;
+    background: #e1eee7;
+    color: #287c68;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.module7-header h1 {
+    margin: 1rem 0 0.7rem;
+    color: #244b3b;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.module7-header p {
+    max-width: 650px;
+    margin: 0 auto;
+    color: #718078;
+    line-height: 1.8;
+}
+
+/* SECTION */
+
+.module7-section {
+    padding: 2rem;
+    border: 1px solid #e2ebe5;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(37, 76, 57, 0.05);
+}
+
+.module7-section h2 {
+    margin-top: 0;
+    color: #315c4b;
+}
+
+.module7-section>p {
+    color: #718078;
+    line-height: 1.7;
+}
+
+/* IDENTITY FORM */
+
+.module7-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+}
+
+.module7-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    color: #315c4b;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.module7-form input,
+.module7-essay-card textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #dce9e3;
+    border-radius: 10px;
+    background: #fbfdfb;
+    color: #263b32;
+    font: inherit;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.module7-form input:focus,
+.module7-essay-card textarea:focus {
+    border-color: #287c68;
+    box-shadow: 0 0 0 3px rgba(40, 124, 104, 0.1);
+    background: #ffffff;
+}
+
+/* BUTTONS */
+
+.module7-page button {
+    font: inherit;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.module7-form>button,
+.module7-navigation button {
+    padding: 0.85rem 1.3rem;
+    border: none;
+    border-radius: 10px;
+    background: #287c68;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.module7-form>button:hover,
+.module7-navigation button:hover:not(:disabled) {
+    background: #1e624f;
+    transform: translateY(-1px);
+}
+
+.module7-page button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* QUESTION PROGRESS */
+
+.module7-question {
+    margin-top: 1.8rem;
+}
+
+.module7-question-progress {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    color: #718078;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.module7-progress-bar {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #e8efea;
+}
+
+.module7-progress-bar>div {
+    height: 100%;
+    border-radius: inherit;
+    background: #287c68;
+    transition: width 0.3s ease;
+}
+
+/* QUESTION INFO */
+
+.module7-question-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+}
+
+.module7-question-info span {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    background: #eaf3ee;
+    color: #287c68;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+/* STIMULUS */
+
+.module7-stimulus {
+    margin: 1.2rem 0;
+    padding: 1.3rem;
+    border-left: 4px solid #5a9a7d;
+    border-radius: 0 12px 12px 0;
+    background: #f3f8f4;
+}
+
+.module7-stimulus h3 {
+    margin-top: 0;
+    color: #315c4b;
+    font-size: 1rem;
+}
+
+.module7-stimulus p {
+    margin-bottom: 0;
+    color: #465b50;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+/* QUESTION TEXT */
+
+.module7-question-text {
+    margin: 1.5rem 0;
+    color: #263b32;
+    font-size: 1.08rem;
+    line-height: 1.8;
+}
+
+/* ANSWER OPTIONS */
+
+.module7-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.module7-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #e0e9e3;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #465b50;
+    text-align: left;
+    line-height: 1.7;
+}
+
+.module7-option:hover {
+    border-color: #80b49b;
+    background: #f7fbf8;
+}
+
+.module7-option.selected {
+    border: 2px solid #287c68;
+    background: #edf6f0;
+    color: #244b3b;
+}
+
+.module7-option-label {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #eaf1ec;
+    color: #315c4b;
+    font-weight: 800;
+}
+
+.module7-option.selected .module7-option-label {
+    background: #287c68;
+    color: #ffffff;
+}
+
+/* NAVIGATION */
+
+.module7-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.module7-navigation button:first-child {
+    border: 1px solid #dce9e3;
+    background: #ffffff;
+    color: #315c4b;
+}
+
+.module7-navigation button:first-child:hover:not(:disabled) {
+    background: #f1f6f2;
+}
+
+/* ESSAY */
+
+.module7-essay-card {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e0e9e3;
+    border-radius: 15px;
+    background: #fbfdfb;
+}
+
+.module7-essay-card h3 {
+    color: #315c4b;
+    line-height: 1.5;
+}
+
+.module7-essay-card>p {
+    color: #53665b;
+    line-height: 1.8;
+}
+
+.module7-essay-card textarea {
+    min-height: 170px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.module7-word-count {
+    display: block;
+    margin-top: 0.5rem;
+    color: #819087;
+    font-size: 0.82rem;
+    text-align: right;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+    .module7-page {
+        padding: 1.5rem 0.9rem;
+    }
+
+    .module7-section {
+        padding: 1.2rem;
+    }
+
+    .module7-navigation {
+        flex-direction: column;
+    }
+
+    .module7-navigation button {
+        width: 100%;
+    }
+
+    .module7-essay-card {
+        padding: 1rem;
+    }
+
+    .module7-option {
+        gap: 0.7rem;
+        padding: 0.8rem;
+    }
+}
+
+/* Visual stimulus */
+.module7-visual {
+    margin: 18px 0;
+    padding: 18px;
+    border: 1px solid #dce5e0;
+    border-radius: 14px;
+    background: #f8fbf9;
+    color: #263b32;
+    overflow: hidden;
+}
+
+.module7-visual h4 {
+    margin: 0 0 14px;
+    font-size: 16px;
+}
+
+.module7-visual svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.module7-visual-caption {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #53665d;
+}
+
+.module7-stimulus-text p {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    margin: 8px 0;
+}
+
+.module7-model-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.module7-model {
+    padding: 12px;
+    border: 1px solid #dce5e0;
+    border-radius: 10px;
+    background: #ffffff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.module7-model strong {
+    font-size: 14px;
+}
+
+.module7-model span {
+    font-size: 12px;
+    color: #53665d;
+}
+
+.module7-essay-question {
+    margin: 18px 0;
+}
+
+.module7-essay-question p {
+    line-height: 1.7;
+    font-weight: 500;
+}
+
+.module7-essay-question textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #cbd5d0;
+    border-radius: 10px;
+    font: inherit;
+    resize: vertical;
+}
+
+.module7-result-identity,
+.module7-result-summary,
+.module7-result-card {
+    margin: 18px 0;
+    padding: 18px;
+    border: 1px solid #dce5e0;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.module7-result-score {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    text-align: center;
+}
+
+.module7-result-score div {
+    padding: 14px 8px;
+    border-radius: 10px;
+    background: #f1f6f3;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.module7-result-score strong {
+    font-size: 28px;
+}
+
+.module7-result-score span {
+    font-size: 13px;
+}
+
+.module7-result-card p {
+    line-height: 1.7;
+}
+
+.module7-result-note {
+    margin-top: 20px;
+    padding: 14px;
+    border-left: 4px solid #729b83;
+    background: #f1f6f3;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .module7-model-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .module7-result-score {
+        gap: 6px;
+    }
+
+    .module7-result-score strong {
+        font-size: 23px;
+    }
+
+    .module7-visual {
+        padding: 12px;
+    }
+}
+
+/* TABEL STIMULUS MODUL 7 */
+
+.module7-table-wrapper {
+    width: 100%;
+    margin: 18px 0 24px;
+    overflow-x: auto;
+    border: 1px solid #d5e3da;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.module7-table {
+    width: 100%;
+    min-width: 480px;
+    border-collapse: collapse;
+    color: #344b3e;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.module7-table th {
+    padding: 14px 16px;
+    background: #e5f1e9;
+    color: #245a43;
+    font-weight: 800;
+    text-align: left;
+    border: 1px solid #d5e3da;
+}
+
+.module7-table td {
+    padding: 13px 16px;
+    border: 1px solid #dce8e0;
+    vertical-align: top;
+    text-align: left;
+}
+
+.module7-table tbody tr:nth-child(even) {
+    background: #f5f9f6;
+}
+
+.module7-table tbody tr:hover {
+    background: #edf5ef;
+}
+
+@media (max-width: 600px) {
+    .module7-table {
+        font-size: 0.85rem;
+    }
+
+    .module7-table th,
+    .module7-table td {
+        padding: 10px;
+    }
+}
+
+.module7-stimulus-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    background: white;
+}
+
+.module7-stimulus-table th,
+.module7-stimulus-table td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+.module7-stimulus-table th {
+    background: #e8f3ee;
+    font-weight: 700;
+}
+
+.module7-stimulus-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}

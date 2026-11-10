@@ -4,6 +4,12 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Module1Page from './pages/Module1Page';
 import Module2Page from './pages/Module2Page';
 import Module3Page from './pages/Module3Page';
+import Module4Page from './pages/Module4Page';
+import Module5Page from './pages/Module5Page';
+import Module6Page from './pages/Module6Page';
+import Module7Page from './pages/Module7Page';
+import TeacherLoginPage from './pages/TeacherLoginPage';
+import TeacherDashboardPage from './pages/TeacherDashboardPage';
 import type { IMFProgress, LearningModule } from './types/curriculum';
 import { LEARNING_MODULES } from './data/curriculumData';
 import {
@@ -112,6 +118,45 @@ export const App: React.FC = () => {
       return;
     }
 
+    if (moduleId === 'gaya-london') {
+      setIsModuleModalOpen(false);
+      const updated = updateLastPage(moduleId);
+      setProgress(updated);
+      navigate('/module-3');
+      return;
+    }
+
+    if (moduleId === 'gaya-dipol-dipol') {
+      setIsModuleModalOpen(false);
+      const updated = updateLastPage(moduleId);
+      setProgress(updated);
+      navigate('/module-4');
+      return;
+    }
+
+    if (moduleId === 'ikatan-hidrogen') {
+      setIsModuleModalOpen(false);
+      const updated = updateLastPage(moduleId);
+      setProgress(updated);
+      navigate('/module-5');
+      return;
+    }
+    if (moduleId === 'perbandingan-gaya') {
+      setIsModuleModalOpen(false);
+      const updated = updateLastPage(moduleId);
+      setProgress(updated);
+      navigate('/module-6');
+      return;
+    }
+
+    if (moduleId === 'evaluasi-akhir') {
+      setIsModuleModalOpen(false);
+      const updated = updateLastPage(moduleId);
+      setProgress(updated);
+      navigate('/module-7');
+      return;
+    }
+
     setIsModuleModalOpen(false);
     showToast(
       `Halaman materi ${mod ? mod.title : moduleId} belum tersedia.`
@@ -214,6 +259,16 @@ export const App: React.FC = () => {
       <Route path="/module-1" element={<Module1Page />} />
       <Route path="/module-2" element={<Module2Page />} />
       <Route path="/module-3" element={<Module3Page />} />
+      <Route path="/module-4" element={<Module4Page />} />
+      <Route path="/module-5" element={<Module5Page />} />
+      <Route path="/module-6" element={<Module6Page />} />
+      <Route path="/module-7" element={<Module7Page />} />
+
+      {/* Teacher Mode */}
+      <Route path="/guru" element={<Navigate to="/guru/login" replace />} />
+      <Route path="/guru/login" element={<TeacherLoginPage />} />
+      <Route path="/guru/dashboard" element={<TeacherDashboardPage />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
