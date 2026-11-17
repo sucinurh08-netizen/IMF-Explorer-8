@@ -10,6 +10,10 @@ import Module6Page from './pages/Module6Page';
 import Module7Page from './pages/Module7Page';
 import TeacherLoginPage from './pages/TeacherLoginPage';
 import TeacherDashboardPage from './pages/TeacherDashboardPage';
+import StudentLoginPage from './pages/StudentLoginPage';
+import StudentRegisterPage from './pages/StudentRegisterPage';
+import StudentForgotPasswordPage from './pages/StudentForgotPasswordPage';
+import StudentResetPasswordPage from './pages/StudentResetPasswordPage';
 import type { IMFProgress, LearningModule } from './types/curriculum';
 import { LEARNING_MODULES } from './data/curriculumData';
 import {
@@ -165,6 +169,10 @@ export const App: React.FC = () => {
 
   return (
     <Routes>
+      <Route path="/login" element={<StudentLoginPage />} />
+      <Route path="/register" element={<StudentRegisterPage />} />
+      <Route path="/forgot-password" element={<StudentForgotPasswordPage />} />
+      <Route path="/reset-password" element={<StudentResetPasswordPage />} />
       <Route
         path="/"
         element={
@@ -269,7 +277,7 @@ export const App: React.FC = () => {
       <Route path="/guru/login" element={<TeacherLoginPage />} />
       <Route path="/guru/dashboard" element={<TeacherDashboardPage />} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
