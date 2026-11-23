@@ -1,14 +1,28 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../utils/supabase';
 import './Module2Closing.css';
+
+type DiscoveryComment = {
+    id: number;
+    user_id: string;
+    comment: string;
+    comment_type: 'peer' | 'teacher_feedback';
+    created_at: string;
+    name: string;
+    role: string;
+};
 
 type DiscoveryPost = {
     id: number;
+    user_id: string;
+    simulation_id: string;
+    simulation_title: string;
+    discovery: string;
+    created_at: string;
     name: string;
     className: string;
-    simulation: string;
-    discovery: string;
-    comments: string[];
+    comments: DiscoveryComment[];
 };
 
 const simulations = [
@@ -131,6 +145,9 @@ const Module2Closing: React.FC = () => {
     const [posts, setPosts] = useState<DiscoveryPost[]>([]);
     const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
     const [message, setMessage] = useState('');
+    useEffect(() => {
+        fetchDiscoveryPosts();
+    }, []);
 
     const [activeSimulation, setActiveSimulation] = useState<string | null>(null);
     const [openedSimulations, setOpenedSimulations] = useState<string[]>([]);
@@ -165,50 +182,205 @@ const Module2Closing: React.FC = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
 
-        if (!name.trim() || !className.trim() || !selectedSimulation || !discovery.trim()) {
-            setMessage('Lengkapi semua bagian sebelum mengirim temuanmu.');
+    const fetchDiscoveryPosts = async () => {
+        const { data: postsData, error: postsError } = await supabase
+            .from('discovery_posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (postsError) {
+            console.error('Gagal mengambil temuan:', postsError);
+            setMessage('Temuan belum berhasil dimuat. Silakan coba lagi.');
             return;
         }
 
-        const newPost: DiscoveryPost = {
-            id: Date.now(),
-            name: name.trim(),
-            className: className.trim(),
-            simulation: selectedInfo?.title || '',
-            discovery: discovery.trim(),
-            comments: []
-        };
+        const postIds = (postsData || []).map((post) => post.id);
 
-        setPosts((previousPosts) => [newPost, ...previousPosts]);
+        let commentsData: any[] = [];
+
+        if (postIds.length > 0) {
+            const { data, error } = await supabase
+                .from('discovery_comments')
+                .select('*')
+                .in('post_id', postIds)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Gagal mengambil tanggapan:', error);
+            } else {
+                commentsData = data || [];
+            }
+        }
+
+
+        const commentUserIds = [
+            ...new Set(commentsData.map((comment) => comment.user_id))
+        ];
+
+        const allUserIds = [
+            ...new Set([
+                ...(postsData || []).map((post) => post.user_id),
+                ...commentUserIds
+            ])
+        ];
+
+        let profiles: any[] = [];
+
+        if (allUserIds.length > 0) {
+            const { data, error } = await supabase.rpc(
+                'get_discovery_profiles',
+                {
+                    target_user_ids: allUserIds
+                }
+            );
+
+            if (error) {
+                console.error('Gagal mengambil profil Discovery Wall:', error);
+            } else {
+                profiles = data || [];
+            }
+        }
+
+        const profileMap = new Map(
+            profiles.map((profile) => [profile.user_id, profile])
+        );
+
+
+        const formattedPosts: DiscoveryPost[] = (postsData || []).map((post) => {
+            const profile = profileMap.get(post.user_id);
+
+            const postComments: DiscoveryComment[] = commentsData
+                .filter((comment) => comment.post_id === post.id)
+                .map((comment) => {
+                    const commentProfile = profileMap.get(comment.user_id);
+
+                    return {
+                        id: comment.id,
+                        user_id: comment.user_id,
+                        comment: comment.comment,
+                        comment_type: comment.comment_type,
+                        created_at: comment.created_at,
+                        name: commentProfile?.nama || 'Pengguna',
+                        role: commentProfile?.role || 'student'
+                    };
+                });
+
+            return {
+                id: post.id,
+                user_id: post.user_id,
+                simulation_id: post.simulation_id,
+                simulation_title: post.simulation_title,
+                discovery: post.discovery,
+                created_at: post.created_at,
+                name: profile?.nama || 'Siswa',
+                className: profile?.kelas || '-',
+                comments: postComments
+            };
+        });
+
+        setPosts(formattedPosts);
+    };
+
+    const handleSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ) => {
+        event.preventDefault();
+
+        if (!selectedSimulation || !discovery.trim()) {
+            setMessage('Pilih simulasi dan tuliskan temuanmu terlebih dahulu.');
+            return;
+        }
+
+        const { data: userData, error: userError } =
+            await supabase.auth.getUser();
+
+        if (userError || !userData.user) {
+            setMessage('Silakan login terlebih dahulu.');
+            return;
+        }
+
+        if (!selectedInfo) {
+            setMessage('Simulasi yang dipilih tidak ditemukan.');
+            return;
+        }
+
+        const { error } = await supabase
+            .from('discovery_posts')
+            .insert({
+                user_id: userData.user.id,
+                simulation_id: selectedInfo.id,
+                simulation_title: selectedInfo.title,
+                discovery: discovery.trim()
+            });
+
+        if (error) {
+            console.error('Gagal menyimpan temuan:', error);
+            setMessage('Temuan gagal dikirim. Silakan coba lagi.');
+            return;
+        }
+
+        await fetchDiscoveryPosts();
 
         setName('');
         setClassName('');
         setSelectedSimulation('');
         setDiscovery('');
-        setMessage('🎉 Temuanmu berhasil ditambahkan ke Discovery Wall!');
+        setMessage('🎉 Temuanmu berhasil disimpan ke Discovery Wall!');
     };
 
-    const handleComment = (postId: number) => {
+    const handleComment = async (postId: number) => {
         const comment = commentInputs[postId]?.trim();
 
         if (!comment) return;
 
-        setPosts((previousPosts) =>
-            previousPosts.map((post) =>
-                post.id === postId
-                    ? { ...post, comments: [...post.comments, comment] }
-                    : post
-            )
-        );
+        const { data: userData, error: userError } =
+            await supabase.auth.getUser();
+
+        if (userError || !userData.user) {
+            setMessage('Silakan login terlebih dahulu.');
+            return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('Info login')
+            .select('role')
+            .eq('user_id', userData.user.id)
+            .single();
+
+        if (profileError || !profile) {
+            setMessage('Profil akun tidak ditemukan.');
+            return;
+        }
+
+        if (profile.role !== 'student') {
+            setMessage('Akun guru tidak dapat mengirim tanggapan siswa.');
+            return;
+        }
+
+        const { error } = await supabase
+            .from('discovery_comments')
+            .insert({
+                post_id: postId,
+                user_id: userData.user.id,
+                comment,
+                comment_type: 'peer'
+            });
+
+        if (error) {
+            console.error('Gagal menyimpan tanggapan:', error);
+            setMessage('Tanggapan gagal dikirim. Silakan coba lagi.');
+            return;
+        }
 
         setCommentInputs((previous) => ({
             ...previous,
             [postId]: ''
         }));
+
+        await fetchDiscoveryPosts();
     };
+
 
     return (
         <section className="module2-closing">
@@ -549,7 +721,7 @@ const Module2Closing: React.FC = () => {
                                     <span>{post.className} · Baru saja</span>
                                 </div>
                                 <span className="post-simulation-tag">
-                                    {post.simulation}
+                                    {post.simulation_title}
                                 </span>
                             </div>
 
@@ -558,11 +730,24 @@ const Module2Closing: React.FC = () => {
                             <div className="post-comments">
                                 <strong>💬 Tanggapan teman ({post.comments.length})</strong>
 
-                                {post.comments.map((comment, index) => (
-                                    <p className="post-comment" key={index}>
-                                        {comment}
-                                    </p>
+
+                                {post.comments.map((comment) => (
+                                    <div
+                                        className={`post-comment ${comment.comment_type === 'teacher_feedback'
+                                                ? 'post-comment-teacher'
+                                                : 'post-comment-peer'
+                                            }`}
+                                        key={comment.id}
+                                    >
+                                        <strong>
+                                            {comment.comment_type === 'teacher_feedback'
+                                                ? `🌿 ${comment.name} · Feedback dari Guru`
+                                                : `💬 ${comment.name} · Tanggapan Siswa`}
+                                        </strong>
+                                        <p>{comment.comment}</p>
+                                    </div>
                                 ))}
+
 
                                 <div className="comment-input-row">
                                     <input

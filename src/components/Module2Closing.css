@@ -1506,3 +1506,23 @@ button.summary-card {
         margin-top: -10px;
     }
 }
+
+/* Tanggapan siswa */
+.post-comment-peer {
+    background: #f3f5ff;
+    border-left: 3px solid #818cf8;
+}
+
+/* Feedback guru */
+.post-comment-teacher {
+    background: #ecfdf3;
+    border-left: 3px solid #22a06b;
+}
+
+.post-comment-teacher strong {
+    color: #166534;
+}
+
+.post-comment-teacher p {
+    color: #365b45;
+}

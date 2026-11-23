@@ -8,6 +8,7 @@ const StudentRegisterPage: React.FC = () => {
     const navigate = useNavigate();
 
     const [nama, setNama] = useState('');
+    const [kelas, setKelas] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,7 +21,7 @@ const StudentRegisterPage: React.FC = () => {
         setError('');
         setSuccess('');
 
-        if (!nama.trim() || !email.trim() || !password) {
+        if (!nama.trim() || !kelas.trim() || !email.trim() || !password || !confirmPassword) {
             setError('Semua kolom wajib diisi.');
             return;
         }
@@ -44,13 +45,13 @@ const StudentRegisterPage: React.FC = () => {
                 options: {
                     data: {
                         nama: nama.trim(),
+                        kelas: kelas.trim(),
                         account_type: 'student',
                     },
                 },
             });
 
             if (signUpError) throw signUpError;
-
 
             if (data.session) {
                 setSuccess('Pendaftaran berhasil! Mengarahkan ke halaman utama...');
@@ -95,6 +96,18 @@ const StudentRegisterPage: React.FC = () => {
                             value={nama}
                             onChange={(e) => setNama(e.target.value)}
                             autoComplete="name"
+                            required
+                        />
+                    </div>
+
+                    <div className="student-auth-field">
+                        <label htmlFor="register-class">Kelas</label>
+                        <input
+                            id="register-class"
+                            type="text"
+                            placeholder="Contoh: XI-1"
+                            value={kelas}
+                            onChange={(e) => setKelas(e.target.value)}
                             required
                         />
                     </div>

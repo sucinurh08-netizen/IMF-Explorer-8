@@ -13,6 +13,8 @@ const StudentLoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -25,14 +27,26 @@ const StudentLoginPage: React.FC = () => {
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabase.auth.signInWithPassword({
                 email: email.trim(),
                 password,
             });
 
             if (error) throw error;
 
-            navigate('/', { replace: true });
+            const { data: account, error: accountError } = await supabase
+                .from('Info login')
+                .select('role')
+                .eq('user_id', data.user.id)
+                .maybeSingle();
+
+            if (accountError) throw accountError;
+
+            if (account?.role === 'admin' || account?.role === 'teacher') {
+                navigate('/guru/dashboard', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
         } catch (err) {
             setError(
                 err instanceof Error
@@ -44,6 +58,8 @@ const StudentLoginPage: React.FC = () => {
         }
     };
 
+
+
     const handleGoogleLogin = async () => {
         setError('');
         setLoading(true);
@@ -52,7 +68,7 @@ const StudentLoginPage: React.FC = () => {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/`,
+                    redirectTo: `${window.location.origin}/auth/callback`,
                 },
             });
 
@@ -163,9 +179,6 @@ const StudentLoginPage: React.FC = () => {
                     Masuk sebagai Tamu
                 </button>
 
-                <p className="student-auth-teacher">
-                    Guru atau admin? <Link to="/guru/login">Login Guru</Link>
-                </p>
             </div>
         </div>
     );
