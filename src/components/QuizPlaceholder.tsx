@@ -19,6 +19,7 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
     const [submitted, setSubmitted] = useState(false);
     const [loadingDiagnostic, setLoadingDiagnostic] = useState(true);
     const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+    const [storageWarning, setStorageWarning] = useState('');
 
     const storageKey = `diagnostic-${moduleId}`;
 
@@ -78,6 +79,7 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
     }, [moduleId, storageKey, setDraft]);
 
 
+
     const handleAnswer = (questionId: string, option: string) => {
         if (submitted) return;
 
@@ -86,16 +88,25 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
             [questionId]: option,
         };
 
-        setAnswers(updated);
-
         const updatedDraft = {
             answers: updated,
             submitted: false,
         };
 
+        setAnswers(updated);
         setDraft(updatedDraft);
-        localStorage.setItem(storageKey, JSON.stringify(updatedDraft));
+
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(updatedDraft));
+            setStorageWarning('');
+        } catch (error) {
+            console.error('Gagal menyimpan jawaban diagnostik:', error);
+            setStorageWarning(
+                'Penyimpanan jawaban gagal. Jawaban Anda hanya tersimpan sementara selama halaman ini terbuka dan dapat hilang jika halaman dimuat ulang.'
+            );
+        }
     };
+
 
 
     const handleSubmit = async () => {
@@ -108,7 +119,16 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
 
         setSubmitted(true);
         setDraft(result);
-        localStorage.setItem(storageKey, JSON.stringify(result));
+
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(result));
+            setStorageWarning('');
+        } catch (storageError) {
+            console.error('Gagal menyimpan hasil diagnostik:', storageError);
+            setStorageWarning(
+                'Hasil diagnostik tidak dapat disimpan di perangkat ini. Hasil hanya tersedia sementara selama halaman terbuka dan dapat hilang jika halaman dimuat ulang.'
+            );
+        }
 
         // Jika sudah pernah mengerjakan, jangan simpan ulang ke database.
         if (alreadySubmitted) return;
@@ -138,17 +158,29 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
             setAlreadySubmitted(true);
         } catch (error) {
             console.error('Gagal menyimpan hasil diagnostik:', error);
-            alert('Hasil diagnostik gagal disimpan. Silakan hubungi guru atau coba kembali.');
+            setStorageWarning(
+                'Hasil diagnostik gagal disimpan ke akun. Silakan periksa koneksi internet atau coba kembali. Jawaban yang belum tersimpan dapat hilang jika halaman dimuat ulang.'
+            );
             setSubmitted(false);
         }
     };
 
 
+
     const handleRetry = () => {
-        setAnswers({});
-        setSubmitted(false);
-        setDraft(null);
-        localStorage.removeItem(storageKey);
+        try {
+            localStorage.removeItem(storageKey);
+
+            setAnswers({});
+            setSubmitted(false);
+            setDraft(null);
+            setStorageWarning('');
+        } catch (error) {
+            console.error('Gagal menghapus draf diagnostik:', error);
+            setStorageWarning(
+                'Draf diagnostik gagal dihapus dari penyimpanan perangkat. Data lama mungkin masih tersimpan. Silakan coba lagi.'
+            );
+        }
     };
 
     const score = MODULE_1_DIAGNOSTIC.reduce((total, question) => {
@@ -170,6 +202,21 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
     }
     return (
         <div className="quiz-container">
+            {storageWarning && (
+                <div
+                    role="alert"
+                    style={{
+                        padding: '12px 16px',
+                        marginBottom: '16px',
+                        borderRadius: '8px',
+                        backgroundColor: '#fff3cd',
+                        color: '#856404',
+                        border: '1px solid #ffecb5',
+                    }}
+                >
+                    {storageWarning}
+                </div>
+            )}
             <div className="quiz-header">
                 <span className="quiz-label">ASESMEN DIAGNOSTIK</span>
                 <h3>Seberapa Kenal Kamu dengan Air dan Minyak?</h3>

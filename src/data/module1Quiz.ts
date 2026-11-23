@@ -5,6 +5,7 @@ export type QuizQuestion = {
   options: string[];
   correctOption: string;
   explanation: string;
+  sourceTopic?: string;
 };
 
 export const MODULE_1_QUIZ: QuizQuestion[] = [
