@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { MODULE_1_DIAGNOSTIC } from '../data/module1Diagnostic';
+import { supabase } from '../utils/supabase';
 
 interface QuizPlaceholderProps {
     moduleId: string;
@@ -16,23 +17,66 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
     void draft;
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
+    const [loadingDiagnostic, setLoadingDiagnostic] = useState(true);
+    const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
     const storageKey = `diagnostic-${moduleId}`;
 
-    useEffect(() => {
-        try {
-            const saved = localStorage.getItem(storageKey);
 
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                setAnswers(parsed.answers || {});
-                setSubmitted(parsed.submitted || false);
-                setDraft(parsed);
+
+    useEffect(() => {
+        let active = true;
+
+        const initializeDiagnostic = async () => {
+            setLoadingDiagnostic(true);
+
+            try {
+                const {
+                    data: { user },
+                    error: userError,
+                } = await supabase.auth.getUser();
+
+                if (userError) throw userError;
+                if (!user) throw new Error('Silakan login terlebih dahulu.');
+
+                const { data, error } = await supabase
+                    .from('diagnostic_submissions')
+                    .select('id, answers, correct_count, total_questions, score, submitted_at')
+                    .eq('user_id', user.id)
+                    .eq('module_id', moduleId)
+                    .maybeSingle();
+
+                if (error) throw error;
+                if (!active) return;
+
+                if (data) {
+                    setAnswers(data.answers as Record<string, string>);
+                    setSubmitted(true);
+                    setAlreadySubmitted(true);
+                } else {
+                    const saved = localStorage.getItem(storageKey);
+
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        setAnswers(parsed.answers || {});
+                        setSubmitted(parsed.submitted || false);
+                        setDraft(parsed);
+                    }
+                }
+            } catch (error) {
+                console.error('Gagal memeriksa hasil diagnostik:', error);
+            } finally {
+                if (active) setLoadingDiagnostic(false);
             }
-        } catch {
-            console.warn('Gagal membaca jawaban diagnostik.');
-        }
-    }, [storageKey, setDraft]);
+        };
+
+        void initializeDiagnostic();
+
+        return () => {
+            active = false;
+        };
+    }, [moduleId, storageKey, setDraft]);
+
 
     const handleAnswer = (questionId: string, option: string) => {
         if (submitted) return;
@@ -53,8 +97,9 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
         localStorage.setItem(storageKey, JSON.stringify(updatedDraft));
     };
 
-    const handleSubmit = () => {
-        if (!allAnswered) return;
+
+    const handleSubmit = async () => {
+        if (!allAnswered || loadingDiagnostic) return;
 
         const result = {
             answers,
@@ -64,7 +109,40 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
         setSubmitted(true);
         setDraft(result);
         localStorage.setItem(storageKey, JSON.stringify(result));
+
+        // Jika sudah pernah mengerjakan, jangan simpan ulang ke database.
+        if (alreadySubmitted) return;
+
+        try {
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser();
+
+            if (userError) throw userError;
+            if (!user) throw new Error('Silakan login terlebih dahulu.');
+
+            const { error } = await supabase
+                .from('diagnostic_submissions')
+                .insert({
+                    user_id: user.id,
+                    module_id: moduleId,
+                    answers,
+                    correct_count: score,
+                    total_questions: MODULE_1_DIAGNOSTIC.length,
+                    score: (score / MODULE_1_DIAGNOSTIC.length) * 100,
+                });
+
+            if (error) throw error;
+
+            setAlreadySubmitted(true);
+        } catch (error) {
+            console.error('Gagal menyimpan hasil diagnostik:', error);
+            alert('Hasil diagnostik gagal disimpan. Silakan hubungi guru atau coba kembali.');
+            setSubmitted(false);
+        }
     };
+
 
     const handleRetry = () => {
         setAnswers({});
@@ -83,6 +161,13 @@ const QuizPlaceholder: React.FC<QuizPlaceholderProps> = ({
         (question) => answers[question.id]
     );
 
+    if (loadingDiagnostic) {
+        return (
+            <div className="quiz-container">
+                <p>Memeriksa riwayat tes diagnostik...</p>
+            </div>
+        );
+    }
     return (
         <div className="quiz-container">
             <div className="quiz-header">

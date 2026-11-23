@@ -1,0 +1,254 @@
+.student-auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background:
+        radial-gradient(circle at top left, rgba(111, 160, 128, 0.16), transparent 35%),
+        linear-gradient(135deg, #f4f8f4, #edf3ee);
+    font-family: inherit;
+}
+
+.student-auth-card {
+    width: 100%;
+    max-width: 460px;
+    padding: 42px;
+    background: #ffffff;
+    border: 1px solid #e4ebe5;
+    border-radius: 24px;
+    box-shadow: 0 18px 55px rgba(35, 65, 45, 0.10);
+}
+
+.student-auth-brand {
+    text-align: center;
+    margin-bottom: 34px;
+}
+
+.student-auth-logo {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 12px;
+    border-radius: 18px;
+    background: #244b38;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.student-auth-brand h1 {
+    margin: 0;
+    color: #244b38;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.student-auth-brand p,
+.student-auth-heading p {
+    margin: 7px 0 0;
+    color: #78857d;
+    font-size: 13px;
+}
+
+.student-auth-heading {
+    margin-bottom: 24px;
+}
+
+.student-auth-heading h2 {
+    margin: 0;
+    color: #263b2f;
+    font-size: 23px;
+    font-weight: 750;
+}
+
+.student-auth-field {
+    margin-bottom: 18px;
+}
+
+.student-auth-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34483b;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.student-auth-field input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #dce5dd;
+    border-radius: 10px;
+    outline: none;
+    background: #ffffff;
+    color: #263b2f;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.student-auth-field input:focus {
+    border-color: #527e62;
+    box-shadow: 0 0 0 3px rgba(82, 126, 98, 0.12);
+}
+
+.student-auth-field input::placeholder {
+    color: #a4afa7;
+}
+
+.student-password-wrapper {
+    position: relative;
+}
+
+.student-password-wrapper input {
+    padding-right: 90px;
+}
+
+.student-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #527e62;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.student-auth-forgot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -7px;
+    margin-bottom: 20px;
+}
+
+.student-auth-forgot a,
+.student-auth-register a,
+.student-auth-teacher a {
+    color: #477557;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.student-auth-forgot a:hover,
+.student-auth-register a:hover,
+.student-auth-teacher a:hover {
+    text-decoration: underline;
+}
+
+.student-auth-primary,
+.student-auth-google,
+.student-auth-guest {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.student-auth-primary {
+    border: none;
+    background: #315c43;
+    color: #ffffff;
+}
+
+.student-auth-primary:hover:not(:disabled) {
+    background: #244b38;
+}
+
+.student-auth-primary:disabled,
+.student-auth-google:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.student-auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 22px 0;
+    color: #9aa69d;
+    font-size: 12px;
+}
+
+.student-auth-divider::before,
+.student-auth-divider::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: #e7ece8;
+}
+
+.student-auth-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #dce5dd;
+    background: #ffffff;
+    color: #34483b;
+}
+
+.student-auth-google:hover:not(:disabled) {
+    background: #f7faf7;
+    border-color: #9bb5a1;
+}
+
+.student-auth-google span {
+    font-size: 19px;
+    font-weight: 800;
+    color: #4285f4;
+}
+
+.student-auth-register {
+    margin: 24px 0 18px;
+    text-align: center;
+    color: #77847b;
+    font-size: 13px;
+}
+
+.student-auth-guest {
+    border: 1px solid #dce5dd;
+    background: #f6f9f6;
+    color: #315c43;
+}
+
+.student-auth-guest:hover {
+    background: #edf4ee;
+}
+
+.student-auth-error {
+    margin-bottom: 16px;
+    padding: 11px 13px;
+    border: 1px solid #f1c6c6;
+    border-radius: 9px;
+    background: #fff3f3;
+    color: #a83232;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.student-auth-teacher {
+    margin: 22px 0 0;
+    text-align: center;
+    color: #879189;
+    font-size: 12px;
+}
+
+@media (max-width: 520px) {
+    .student-auth-card {
+        padding: 30px 22px;
+        border-radius: 18px;
+    }
+
+    .student-auth-heading h2 {
+        font-size: 21px;
+    }
+}

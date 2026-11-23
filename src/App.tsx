@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Module1Page from './pages/Module1Page';
 import Module2Page from './pages/Module2Page';
@@ -8,8 +8,12 @@ import Module4Page from './pages/Module4Page';
 import Module5Page from './pages/Module5Page';
 import Module6Page from './pages/Module6Page';
 import Module7Page from './pages/Module7Page';
-import TeacherLoginPage from './pages/TeacherLoginPage';
 import TeacherDashboardPage from './pages/TeacherDashboardPage';
+import StudentLoginPage from './pages/StudentLoginPage';
+import StudentRegisterPage from './pages/StudentRegisterPage';
+import StudentForgotPasswordPage from './pages/StudentForgotPasswordPage';
+import StudentResetPasswordPage from './pages/StudentResetPasswordPage';
+import { supabase } from './utils/supabase';
 import type { IMFProgress, LearningModule } from './types/curriculum';
 import { LEARNING_MODULES } from './data/curriculumData';
 import {
@@ -30,6 +34,52 @@ import { PedagogyBanner } from './components/PedagogyBanner';
 import { Footer } from './components/Footer';
 import { ResetConfirmModal } from './components/ResetConfirmModal';
 import { ModuleDetailModal } from './components/ModuleDetailModal';
+
+
+const AuthCallback: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      try {
+        const { data: { user }, error } =
+          await supabase.auth.getUser();
+
+        if (error || !user) {
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        const { data: teacher, error: teacherError } =
+          await supabase
+            .from('teacher_accounts')
+            .select('role')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+        if (teacherError) throw teacherError;
+
+        if (teacher && ['admin', 'teacher'].includes(teacher.role)) {
+          navigate('/guru/dashboard', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
+      } catch (error) {
+        console.error('Gagal memeriksa akun:', error);
+        navigate('/login', { replace: true });
+      }
+    };
+
+    checkUserRole();
+  }, [navigate]);
+
+  return (
+    <div style={{ textAlign: 'center', padding: '50px' }}>
+      Memeriksa akun, mohon tunggu...
+    </div>
+  );
+};
+
 
 export const App: React.FC = () => {
   const navigate = useNavigate();
@@ -165,6 +215,10 @@ export const App: React.FC = () => {
 
   return (
     <Routes>
+      <Route path="/login" element={<StudentLoginPage />} />
+      <Route path="/register" element={<StudentRegisterPage />} />
+      <Route path="/forgot-password" element={<StudentForgotPasswordPage />} />
+      <Route path="/reset-password" element={<StudentResetPasswordPage />} />
       <Route
         path="/"
         element={
@@ -265,11 +319,14 @@ export const App: React.FC = () => {
       <Route path="/module-7" element={<Module7Page />} />
 
       {/* Teacher Mode */}
-      <Route path="/guru" element={<Navigate to="/guru/login" replace />} />
-      <Route path="/guru/login" element={<TeacherLoginPage />} />
+      <Route path="/guru" element={<Navigate to="/login" replace />} />
       <Route path="/guru/dashboard" element={<TeacherDashboardPage />} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Google Login Callback */}
+      <Route path="/auth/callback" element={<AuthCallback />} />
+
+      {/* Route tidak ditemukan */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };

@@ -38,7 +38,7 @@ type EssayQuestion = {
     expectedAnswers: string[];
 };
 
-const MODULE_7_QUESTIONS: QuizQuestion[] = [
+export const MODULE_7_QUESTIONS: QuizQuestion[] = [
     {
         id: 'q1',
         level: 'C4',

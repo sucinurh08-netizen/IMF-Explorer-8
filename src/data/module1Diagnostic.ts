@@ -16,7 +16,8 @@ export const MODULE_1_DIAGNOSTIC: DiagnosticQuestion[] = [
       "A. Keduanya langsung menyatu sempurna.",
       "B. Keduanya membentuk dua lapisan.",
       "C. Minyak berubah menjadi air.",
-      "D. Air menghilang dari gelas."
+      "D. Air menghilang dari gelas.",
+      "E. Keduanya membentuk larutan homogen."
     ],
     correctOption: "B",
     explanation:
@@ -30,7 +31,8 @@ export const MODULE_1_DIAGNOSTIC: DiagnosticQuestion[] = [
       "A. Keduanya bercampur sementara, kemudian dapat terpisah kembali.",
       "B. Keduanya berubah menjadi satu jenis cairan baru.",
       "C. Minyak larut seluruhnya dan tidak akan terpisah.",
-      "D. Air berubah menjadi minyak."
+      "D. Air berubah menjadi minyak.",
+      "E. Kedua cairan mengalami reaksi kimia dan menghasilkan zat baru."
     ],
     correctOption: "A",
     explanation:
@@ -44,7 +46,8 @@ export const MODULE_1_DIAGNOSTIC: DiagnosticQuestion[] = [
       "A. Air dan minyak selalu memiliki warna yang sama.",
       "B. Air dan minyak merupakan dua cairan yang memiliki sifat berbeda.",
       "C. Air dan minyak selalu memiliki bau yang sama.",
-      "D. Air dan minyak selalu dapat bercampur."
+      "D. Air dan minyak selalu dapat bercampur.",
+      "E. Air dan minyak selalu memiliki massa jenis yang sama."
     ],
     correctOption: "B",
     explanation:
@@ -58,7 +61,8 @@ export const MODULE_1_DIAGNOSTIC: DiagnosticQuestion[] = [
       "A. Minyak berubah menjadi lebih ringan setelah dikocok.",
       "B. Air menguap seluruhnya.",
       "C. Kedua cairan kembali membentuk lapisan terpisah.",
-      "D. Minyak berubah menjadi gas."
+      "D. Minyak berubah menjadi gas.",
+      "E. Air dan minyak membentuk senyawa baru."
     ],
     correctOption: "C",
     explanation:
@@ -72,7 +76,8 @@ export const MODULE_1_DIAGNOSTIC: DiagnosticQuestion[] = [
       "A. Mengubah minyak menjadi air.",
       "B. Membantu minyak terangkat dan terdispersi dalam air saat dicuci.",
       "C. Menghilangkan seluruh air dari peralatan makan.",
-      "D. Mengubah minyak menjadi gas."
+      "D. Mengubah minyak menjadi gas.",
+      "E. Mengubah minyak menjadi zat padat."
     ],
     correctOption: "B",
     explanation:

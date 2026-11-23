@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 
 const TeacherLoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -10,8 +10,14 @@ const TeacherLoginPage: React.FC = () => {
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
         setMessage('');
+
+        if (!isSupabaseConfigured) {
+            setMessage('Layanan Mode Guru belum tersedia karena konfigurasi Supabase belum ditemukan.');
+            return;
+        }
+
+        setLoading(true);
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({

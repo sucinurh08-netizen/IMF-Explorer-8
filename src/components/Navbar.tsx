@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { User } from '@supabase/supabase-js';
 import type { IMFProgress } from '../types/curriculum';
 import { calculateProgressPercentage } from '../utils/storage';
-
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 interface NavbarProps {
   progress: IMFProgress;
   onOpenResetModal: () => void;
@@ -13,6 +15,46 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenResetModal,
   onStartLearning,
 }) => {
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user ?? null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error('Gagal keluar dari akun:', error);
+      return;
+    }
+
+    setCurrentUser(null);
+  };
+
   const percentage = calculateProgressPercentage(progress.completedPages, 7);
   const isStarted = progress.completedPages.length > 0 || progress.lastPage !== 'fenomena-air-minyak';
 
@@ -108,6 +150,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </>
             ) : null}
+
+            {currentUser ? (
+              <div className="nav-user-menu">
+                <span className="nav-user-name" title={currentUser.email}>
+                  👤 {currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0]}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="nav-logout-btn"
+                  title="Keluar dari akun"
+                >
+                  Keluar
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="nav-login-btn"
+                onClick={() => navigate('/login')}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                <span>Masuk</span>
+              </button>
+            )}
 
             <button
               type="button"

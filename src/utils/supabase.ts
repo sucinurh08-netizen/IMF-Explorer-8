@@ -1,13 +1,16 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-if (!supabaseUrl || !supabasePublishableKey) {
-    throw new Error('Konfigurasi Supabase belum ditemukan. Periksa file .env');
-}
-
-export const supabase = createClient(
-    supabaseUrl,
-    supabasePublishableKey
+export const isSupabaseConfigured = Boolean(
+    supabaseUrl && supabasePublishableKey
 );
+
+export const supabase = isSupabaseConfigured
+    ? createClient(supabaseUrl, supabasePublishableKey)
+    : createClient(
+        'https://placeholder.supabase.co',
+        'placeholder-anon-key'
+    );
