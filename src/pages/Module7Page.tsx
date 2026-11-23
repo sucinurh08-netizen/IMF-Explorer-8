@@ -418,7 +418,7 @@ Bagian hidrofilik berinteraksi dengan lingkungan air, sedangkan bagian hidrofobi
     }
 ];
 
-const ESSAY_QUESTIONS: EssayQuestion[] = [
+export const ESSAY_QUESTIONS: EssayQuestion[] = [
     {
         level: 'C4',
         title: 'Menganalisis Fenomena Air, Minyak, dan Surfaktan',
@@ -633,16 +633,14 @@ const Module7Page: React.FC = () => {
     );
 
     const handleSubmit = async () => {
-        if (
-            answeredCount !== MODULE_7_QUESTIONS.length ||
-            !allEssaysAnswered ||
-            submitting
-        ) {
+
+        if (submitting) {
             return;
         }
 
         setSubmitting(true);
         setDatabaseError('');
+
 
         try {
             const { data, error } = await supabase.rpc(
@@ -1115,11 +1113,7 @@ const Module7Page: React.FC = () => {
                             >
                                 {checkingSubmission ? 'Memeriksa...' : 'Mulai Evaluasi'}
                             </button>
-                            {databaseError && (
-                                <p className="module7-error-message">
-                                    {databaseError}
-                                </p>
-                            )}
+
                         </div>
                     </section>
                 )}
@@ -1188,6 +1182,15 @@ const Module7Page: React.FC = () => {
                                                 </button>
                                             ))}
                                         </div>
+                                        {databaseError && (
+                                            <p
+                                                className="module7-error-message"
+                                                role="alert"
+                                                aria-live="assertive"
+                                            >
+                                                {databaseError}
+                                            </p>
+                                        )}
 
                                         <div className="module7-navigation">
                                             <button
@@ -1274,7 +1277,15 @@ const Module7Page: React.FC = () => {
                                 ))}
                             </div>
                         ))}
-
+                        {databaseError && (
+                            <p
+                                className="module7-error-message"
+                                role="alert"
+                                aria-live="assertive"
+                            >
+                                {databaseError}
+                            </p>
+                        )}
                         <div className="module7-navigation">
                             <button
                                 type="button"
@@ -1288,7 +1299,11 @@ const Module7Page: React.FC = () => {
 
                             <button
                                 type="button"
-                                disabled={!allEssaysAnswered || submitting}
+                                disabled={
+                                    answeredCount !== MODULE_7_QUESTIONS.length ||
+                                    !allEssaysAnswered ||
+                                    submitting
+                                }
                                 onClick={handleSubmit}
                             >
                                 {submitting ? 'Menyimpan Jawaban...' : 'Kirim Seluruh Jawaban'}

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase';
 import { MODULE_1_DIAGNOSTIC } from '../data/module1Diagnostic';
-import { MODULE_7_QUESTIONS } from './Module7Page';
+import { MODULE_7_QUESTIONS, ESSAY_QUESTIONS } from './Module7Page';
 import './TeacherDashboardPage.css';
 type Student = {
     id: number;
@@ -71,35 +71,79 @@ type DiscoveryPost = {
 };
 
 
-const renderAnswers = (answers: unknown, label: string) => {
-    if (answers === null || answers === undefined) {
-        return '-';
-    }
 
-    if (Array.isArray(answers)) {
-        return answers.map((answer, index) => (
-            <div key={index} style={{ marginBottom: 8 }}>
-                <strong>{label} {index + 1}:</strong>
-                <div>{String(answer)}</div>
-            </div>
-        ));
-    }
 
-    if (typeof answers === 'object') {
-        return Object.entries(answers as Record<string, unknown>).map(
-            ([question, answer]) => (
-                <div key={question} style={{ marginBottom: 8 }}>
-                    <strong>
-                        {question.toUpperCase()}:
-                    </strong>{' '}
-                    {String(answer)}
-                </div>
-            )
-        );
-    }
+const renderEssayAnswers = (answers: unknown) => {
+    const studentAnswers = Array.isArray(answers)
+        ? answers as unknown[]
+        : [];
 
-    return String(answers);
+    return (
+        <div className="teacher-essay-answers">
+            {ESSAY_QUESTIONS.map((essay, essayIndex) => {
+                const essayStudentAnswers = Array.isArray(studentAnswers[essayIndex])
+                    ? studentAnswers[essayIndex] as unknown[]
+                    : [];
+
+                return (
+                    <div
+                        key={essayIndex}
+                        style={{
+                            marginBottom: 20,
+                            padding: 14,
+                            border: '1px solid #dbe5df',
+                            borderRadius: 10
+                        }}
+                    >
+                        <h4>
+                            Esai {essayIndex + 1} — {essay.level}
+                        </h4>
+
+                        <strong>{essay.title}</strong>
+                        <p
+                            style={{
+                                marginTop: 10,
+                                padding: 12,
+                                background: '#f0f7f3',
+                                borderRadius: 8,
+                                whiteSpace: 'pre-wrap',
+                                lineHeight: 1.6,
+                                fontWeight: 'normal'
+                            }}
+                        >
+                            {essay.stimulus}
+                        </p>
+
+                        {essay.questions.map((question, questionIndex) => (
+                            <div
+                                key={questionIndex}
+                                style={{ marginTop: 12 }}
+                            >
+                                <p>
+                                    <strong>{question}</strong>
+                                </p>
+
+                                <div
+                                    style={{
+                                        padding: 10,
+                                        background: '#f5f8f6',
+                                        borderRadius: 6,
+                                        whiteSpace: 'pre-wrap'
+                                    }}
+                                >
+                                    {String(
+                                        essayStudentAnswers[questionIndex] ?? 'Belum dijawab'
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            })}
+        </div>
+    );
 };
+
 
 const TeacherDashboardPage: React.FC = () => {
     const navigate = useNavigate();
@@ -123,6 +167,12 @@ const TeacherDashboardPage: React.FC = () => {
 
     const [essaySubmissions, setEssaySubmissions] = useState<EssaySubmission[]>([]);
     const [module7Submissions, setModule7Submissions] = useState<Module7Submission[]>([]);
+    const [selectedModule7Submission, setSelectedModule7Submission] =
+        useState<Module7Submission | null>(null);
+    const [selectedEssaySubmission, setSelectedEssaySubmission] =
+        useState<EssaySubmission | null>(null);
+    const [essayScore, setEssayScore] = useState('');
+    const [essayFeedback, setEssayFeedback] = useState('');
     const [showItemAnalysis, setShowItemAnalysis] = useState(false);
     const [analysisSubmissions, setAnalysisSubmissions] = useState<Module7Submission[]>([]);
 
@@ -212,6 +262,56 @@ const TeacherDashboardPage: React.FC = () => {
             );
         } finally {
             if (!silent) setLoadingSubmissions(false);
+        }
+    };
+    const handleSaveEssayEvaluation = async () => {
+        if (!selectedEssaySubmission) return;
+
+        const numericScore = Number(essayScore);
+
+        if (essayScore.trim() === '' || !Number.isFinite(numericScore) || numericScore < 0) {
+            setSubmissionError('Masukkan nilai yang valid.');
+            return;
+        }
+
+        setSubmissionError('');
+
+        try {
+            const { data, error } = await supabase
+                .from('essay_submissions')
+                .update({
+                    score: numericScore,
+                    feedback: essayFeedback.trim() || null,
+                })
+                .eq('id', selectedEssaySubmission.id)
+                .select('id, score, feedback')
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (!data) {
+                throw new Error(
+                    'Data pengumpulan tidak ditemukan atau tidak dapat diperbarui. Periksa ID dan izin akses Supabase.'
+                );
+            }
+
+            console.log('HASIL PENYIMPANAN PENILAIAN:', data);
+
+            await fetchSubmissions(true);
+
+            setSelectedEssaySubmission({
+                ...selectedEssaySubmission,
+                score: numericScore,
+                feedback: essayFeedback.trim() || null,
+            });
+
+        } catch (error) {
+            console.error('Gagal menyimpan penilaian:', error);
+            setSubmissionError(
+                error instanceof Error
+                    ? error.message
+                    : 'Gagal menyimpan penilaian.'
+            );
         }
     };
     const fetchItemAnalysis = async () => {
@@ -685,46 +785,46 @@ const TeacherDashboardPage: React.FC = () => {
         }, 100);
     };
 
-const handleShowItemAnalysis = async () => {
+    const handleShowItemAnalysis = async () => {
         setShowEvaluationRecap(false);
-    setShowStudentData(false);
-    setShowSubmissions(false);
-    setShowDiagnostic(false);
-    setShowDiscovery(false);
-    setShowTeacherForm(false);
-    setSelectedDiagnostic(null);
-    setSelectedAnalysisQuestion(null);
+        setShowStudentData(false);
+        setShowSubmissions(false);
+        setShowDiagnostic(false);
+        setShowDiscovery(false);
+        setShowTeacherForm(false);
+        setSelectedDiagnostic(null);
+        setSelectedAnalysisQuestion(null);
 
-    setShowItemAnalysis(true);
-    await fetchItemAnalysis();
+        setShowItemAnalysis(true);
+        await fetchItemAnalysis();
 
-    setTimeout(() => {
-        document.querySelector('.item-analysis-section')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }, 150);
-};
+        setTimeout(() => {
+            document.querySelector('.item-analysis-section')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 150);
+    };
 
-const handleShowDiscovery = async () => {
+    const handleShowDiscovery = async () => {
         setShowEvaluationRecap(false);
-    setShowStudentData(false);
-    setShowSubmissions(false);
-    setShowDiagnostic(false);
-    setShowTeacherForm(false);
-    setSelectedDiagnostic(null);
-    setShowItemAnalysis(false);
+        setShowStudentData(false);
+        setShowSubmissions(false);
+        setShowDiagnostic(false);
+        setShowTeacherForm(false);
+        setSelectedDiagnostic(null);
+        setShowItemAnalysis(false);
 
-    setShowDiscovery(true);
-    await fetchDiscoveryPosts();
+        setShowDiscovery(true);
+        await fetchDiscoveryPosts();
 
-    setTimeout(() => {
-        document.getElementById('discovery-section')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }, 100);
-};
+        setTimeout(() => {
+            document.getElementById('discovery-section')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100);
+    };
     const handleSubmitDiscoveryFeedback = async (postId: number) => {
         const feedback = discoveryFeedbackInputs[postId]?.trim();
 
@@ -1091,7 +1191,7 @@ const handleShowDiscovery = async () => {
                         </div>
                         <h3 style={{ color: '#245b46' }}>Tabel perkembangan siswa</h3>
                         <div style={{ overflowX: 'auto' }}><table style={{ width: '100%', minWidth: 650, borderCollapse: 'collapse' }}><thead><tr style={{ background: '#eaf3ee', textAlign: 'left' }}>{['Nama siswa', 'Progres', 'Evaluasi', 'Data aktual'].map(label => <th key={label} style={{ padding: 12 }}>{label}</th>)}</tr></thead><tbody>
-                            {students.map(student => { const key = normalizeStudentKey(student.nama, student.kelas); const hasActivity = activityKeys.has(key); const hasEvaluation = evaluationKeys.has(key); const isComplete = module7Keys.has(key); return <tr key={student.user_id} style={{ borderBottom: '1px solid #e5e7eb' }}><td style={{ padding: 12 }}>{student.nama}<br/><small style={{ color: '#718096' }}>{student.kelas || '-'}</small></td><td style={{ padding: 12 }}>{isComplete ? 'Selesai belajar' : hasActivity ? 'Aktivitas tercatat' : 'Belum ada aktivitas'}</td><td style={{ padding: 12 }}>{hasEvaluation ? 'Sudah evaluasi' : 'Belum evaluasi'}</td><td style={{ padding: 12 }}>{[module7Keys.has(key) ? 'Modul 7' : '', diagnosticSubmissions.some(item => normalizeStudentKey(item.student_name, item.student_class) === key) ? 'Tes diagnostik' : '', essayKeys.has(key) ? 'Esai' : '', discoveryKeys.has(key) ? 'Discovery Wall' : ''].filter(Boolean).join(', ') || 'Belum ada data'}</td></tr>; })}
+                            {students.map(student => { const key = normalizeStudentKey(student.nama, student.kelas); const hasActivity = activityKeys.has(key); const hasEvaluation = evaluationKeys.has(key); const isComplete = module7Keys.has(key); return <tr key={student.user_id} style={{ borderBottom: '1px solid #e5e7eb' }}><td style={{ padding: 12 }}>{student.nama}<br /><small style={{ color: '#718096' }}>{student.kelas || '-'}</small></td><td style={{ padding: 12 }}>{isComplete ? 'Selesai belajar' : hasActivity ? 'Aktivitas tercatat' : 'Belum ada aktivitas'}</td><td style={{ padding: 12 }}>{hasEvaluation ? 'Sudah evaluasi' : 'Belum evaluasi'}</td><td style={{ padding: 12 }}>{[module7Keys.has(key) ? 'Modul 7' : '', diagnosticSubmissions.some(item => normalizeStudentKey(item.student_name, item.student_class) === key) ? 'Tes diagnostik' : '', essayKeys.has(key) ? 'Esai' : '', discoveryKeys.has(key) ? 'Discovery Wall' : ''].filter(Boolean).join(', ') || 'Belum ada data'}</td></tr>; })}
                             {students.length === 0 && <tr><td colSpan={4} style={{ padding: 16, textAlign: 'center' }}>Belum ada data siswa.</td></tr>}
                         </tbody></table></div>
                         <p style={{ color: '#718096', fontSize: 12, marginTop: 14 }}>Catatan: status “Sedang belajar” di sini berarti ada aktivitas yang tercatat tetapi belum ada evaluasi, bukan indikator aktivitas real-time. Pencocokan data pengumpulan menggunakan nama dan kelas siswa.</p>
@@ -2483,6 +2583,7 @@ const handleShowDiscovery = async () => {
                                             borderCollapse: 'collapse',
                                             minWidth: 850,
                                         }}>
+
                                             <thead>
                                                 <tr style={{
                                                     background: '#eaf3ee',
@@ -2492,30 +2593,65 @@ const handleShowDiscovery = async () => {
                                                     <th style={{ padding: 12 }}>No.</th>
                                                     <th style={{ padding: 12 }}>Nama Siswa</th>
                                                     <th style={{ padding: 12 }}>Kelas</th>
-                                                    <th style={{ padding: 12 }}>Jawaban</th>
                                                     <th style={{ padding: 12 }}>Jumlah Kata</th>
                                                     <th style={{ padding: 12 }}>Waktu Pengumpulan</th>
                                                     <th style={{ padding: 12 }}>Status</th>
                                                     <th style={{ padding: 12 }}>Nilai</th>
-                                                    <th style={{ padding: 12 }}>Feedback</th>
+                                                    <th style={{ padding: 12 }}>Aksi</th>
                                                 </tr>
                                             </thead>
+
+
                                             <tbody>
                                                 {essaySubmissions.map((submission, index) => (
                                                     <tr key={submission.id}>
                                                         <td style={{ padding: 12 }}>{index + 1}</td>
-                                                        <td style={{ padding: 12 }}>{submission.student_name}</td>
-                                                        <td style={{ padding: 12 }}>{submission.student_class || '-'}</td>
-                                                        <td style={{ padding: 12, minWidth: 250, whiteSpace: 'pre-wrap' }}>
-                                                            {submission.answer || '-'}
+
+                                                        <td style={{ padding: 12 }}>
+                                                            <strong>{submission.student_name}</strong>
                                                         </td>
-                                                        <td style={{ padding: 12 }}>{submission.word_count}</td>
+
+                                                        <td style={{ padding: 12 }}>
+                                                            {submission.student_class || '-'}
+                                                        </td>
+
+                                                        <td style={{ padding: 12 }}>
+                                                            {submission.word_count}
+                                                        </td>
+
                                                         <td style={{ padding: 12 }}>
                                                             {new Date(submission.submitted_at).toLocaleString('id-ID')}
                                                         </td>
-                                                        <td style={{ padding: 12 }}>{submission.status}</td>
-                                                        <td style={{ padding: 12 }}>{submission.score ?? 'Belum dinilai'}</td>
-                                                        <td style={{ padding: 12 }}>{submission.feedback || '-'}</td>
+
+                                                        <td style={{ padding: 12 }}>
+                                                            {submission.status || 'Pending'}
+                                                        </td>
+
+                                                        <td style={{ padding: 12 }}>
+                                                            {submission.score ?? 'Belum dinilai'}
+                                                        </td>
+
+                                                        <td style={{ padding: 12 }}>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setSelectedEssaySubmission(submission);
+                                                                    setEssayScore(
+                                                                        submission.score !== null ? String(submission.score) : ''
+                                                                    );
+                                                                    setEssayFeedback(submission.feedback ?? '');
+                                                                }}
+                                                                style={{
+                                                                    padding: '8px 14px',
+                                                                    background: '#245b46',
+                                                                    color: '#ffffff',
+                                                                    border: 'none',
+                                                                    borderRadius: 8,
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                            >
+                                                                Lihat Detail
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -2536,10 +2672,11 @@ const handleShowDiscovery = async () => {
                                     {module7Submissions.length === 0 ? (
                                         <p>Belum ada tugas Modul 7 yang dikumpulkan.</p>
                                     ) : (
+
                                         <table style={{
                                             width: '100%',
                                             borderCollapse: 'collapse',
-                                            minWidth: 850,
+                                            minWidth: 650,
                                         }}>
                                             <thead>
                                                 <tr style={{
@@ -2547,45 +2684,58 @@ const handleShowDiscovery = async () => {
                                                     color: '#245b46',
                                                     textAlign: 'left',
                                                 }}>
-                                                    <th style={{ padding: 12 }}>No.</th>
-                                                    <th style={{ padding: 12 }}>Nama Siswa</th>
-                                                    <th style={{ padding: 12 }}>Kelas</th>
-                                                    <th style={{ padding: 12 }}>Nomor Absen</th>
-                                                    <th style={{ padding: 12 }}>Jawaban Pilihan Ganda</th>
-                                                    <th style={{ padding: 12 }}>Jawaban Esai</th>
-                                                    <th style={{ padding: 12 }}>Skor Pilihan Ganda</th>
-                                                    <th style={{ padding: 12 }}>Waktu Pengumpulan</th>
+                                                    <th style={{ padding: 14 }}>Siswa</th>
+                                                    <th style={{ padding: 14 }}>Kelas</th>
+                                                    <th style={{ padding: 14 }}>Absen</th>
+                                                    <th style={{ padding: 14 }}>Skor PG</th>
+                                                    <th style={{ padding: 14 }}>Waktu Pengumpulan</th>
+                                                    <th style={{ padding: 14 }}>Aksi</th>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
-                                                {module7Submissions.map((submission, index) => (
-
+                                                {module7Submissions.map((submission) => (
                                                     <tr key={submission.id}>
-                                                        <td style={{ padding: 12 }}>{index + 1}</td>
-                                                        <td style={{ padding: 12 }}>{submission.student_name}</td>
-                                                        <td style={{ padding: 12 }}>{submission.student_class || '-'}</td>
-                                                        <td style={{ padding: 12 }}>{submission.attendance_number ?? '-'}</td>
-
-                                                        <td style={{ padding: 12, minWidth: 200 }}>
-                                                            {renderAnswers(submission.mcq_answers, 'Soal')}
+                                                        <td style={{ padding: 14 }}>
+                                                            <strong>{submission.student_name}</strong>
                                                         </td>
 
-                                                        <td style={{ padding: 12, minWidth: 200 }}>
-                                                            {renderAnswers(submission.essay_answers, 'Jawaban')}
+                                                        <td style={{ padding: 14 }}>
+                                                            {submission.student_class || '-'}
                                                         </td>
 
-                                                        <td style={{ padding: 12 }}>
+                                                        <td style={{ padding: 14 }}>
+                                                            {submission.attendance_number ?? '-'}
+                                                        </td>
+
+                                                        <td style={{ padding: 14 }}>
                                                             {submission.mcq_score ?? 'Belum dinilai'}
                                                         </td>
 
-                                                        <td style={{ padding: 12 }}>
+                                                        <td style={{ padding: 14 }}>
                                                             {new Date(submission.submitted_at).toLocaleString('id-ID')}
                                                         </td>
-                                                    </tr>
 
+                                                        <td style={{ padding: 14 }}>
+                                                            <button
+                                                                onClick={() => setSelectedModule7Submission(submission)}
+                                                                style={{
+                                                                    padding: '8px 14px',
+                                                                    background: '#245b46',
+                                                                    color: '#ffffff',
+                                                                    border: 'none',
+                                                                    borderRadius: 8,
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                            >
+                                                                Lihat Detail
+                                                            </button>
+                                                        </td>
+                                                    </tr>
                                                 ))}
                                             </tbody>
                                         </table>
+
                                     )}
                                 </>
                             )}
@@ -2647,6 +2797,427 @@ const handleShowDiscovery = async () => {
                     )}
                 </section>
             )}
+
+
+            {selectedEssaySubmission && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        zIndex: 1100,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 20,
+                    }}
+                    onClick={() => setSelectedEssaySubmission(null)}
+                >
+                    <section
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="essay-detail-title"
+                        onClick={(event) => event.stopPropagation()}
+                        style={{
+                            background: '#ffffff',
+                            width: '100%',
+                            maxWidth: 850,
+                            maxHeight: '90vh',
+                            overflowY: 'auto',
+                            borderRadius: 16,
+                            padding: 24,
+                            boxSizing: 'border-box',
+                        }}
+                    >
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginBottom: 20,
+                        }}>
+                            <div>
+                                <h2 id="essay-detail-title" style={{
+                                    margin: 0,
+                                    color: '#245b46',
+                                }}>
+                                    Detail Pengumpulan Tugas Esai
+                                </h2>
+                                <p style={{ color: '#718096', marginBottom: 0 }}>
+                                    {selectedEssaySubmission.student_name} —{' '}
+                                    {selectedEssaySubmission.student_class || '-'}
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setSelectedEssaySubmission(null)}
+                                style={{
+                                    padding: '8px 14px',
+                                    border: 'none',
+                                    borderRadius: 8,
+                                    background: '#eeeeee',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Tutup ✕
+                            </button>
+                        </div>
+
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                            gap: 12,
+                            marginBottom: 24,
+                        }}>
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Jumlah Kata</small>
+                                <h3 style={{ margin: '6px 0 0' }}>
+                                    {selectedEssaySubmission.word_count}
+                                </h3>
+                            </div>
+
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Status</small>
+                                <h3 style={{ margin: '6px 0 0' }}>
+                                    {selectedEssaySubmission.status || 'Pending'}
+                                </h3>
+                            </div>
+
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Waktu Pengumpulan</small>
+                                <p style={{ margin: '6px 0 0' }}>
+                                    {new Date(selectedEssaySubmission.submitted_at).toLocaleString('id-ID')}
+                                </p>
+                            </div>
+                        </div>
+
+                        <h3 style={{
+                            color: '#245b46',
+                            borderBottom: '2px solid #e2e8f0',
+                            paddingBottom: 10,
+                        }}>
+                            Jawaban Siswa
+                        </h3>
+
+                        <div style={{
+                            background: '#f8faf9',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: 10,
+                            padding: 18,
+                            lineHeight: 1.7,
+                            whiteSpace: 'pre-wrap',
+                            overflowWrap: 'anywhere',
+                            minHeight: 100,
+                        }}>
+                            {selectedEssaySubmission.answer || 'Siswa belum mengisi jawaban.'}
+                        </div>
+
+                        <h3 style={{
+                            color: '#245b46',
+                            marginTop: 28,
+                            borderBottom: '2px solid #e2e8f0',
+                            paddingBottom: 10,
+                        }}>
+                            Penilaian Guru
+                        </h3>
+
+                        <label style={{ display: 'block', fontWeight: 600, marginBottom: 8 }}>
+                            Nilai
+                        </label>
+
+                        <input
+                            type="number"
+                            min="0"
+                            value={essayScore}
+                            onChange={(e) => setEssayScore(e.target.value)}
+                            placeholder="Masukkan nilai siswa"
+                            style={{
+                                width: '100%',
+                                boxSizing: 'border-box',
+                                padding: 12,
+                                border: '1px solid #d1d5db',
+                                borderRadius: 8,
+                                marginBottom: 18,
+                            }}
+                        />
+
+                        <label style={{ display: 'block', fontWeight: 600, marginBottom: 8 }}>
+                            Feedback Guru
+                        </label>
+
+                        <textarea
+                            value={essayFeedback}
+                            onChange={(e) => setEssayFeedback(e.target.value)}
+                            placeholder="Tuliskan apresiasi, koreksi, atau saran untuk siswa..."
+                            rows={5}
+                            style={{
+                                width: '100%',
+                                boxSizing: 'border-box',
+                                padding: 12,
+                                border: '1px solid #d1d5db',
+                                borderRadius: 8,
+                                resize: 'vertical',
+                                fontFamily: 'inherit',
+                                marginBottom: 16,
+                            }}
+                        />
+
+                        {submissionError && (
+                            <p style={{ color: '#dc2626', fontSize: 13 }}>
+                                {submissionError}
+                            </p>
+                        )}
+
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            gap: 10,
+                            flexWrap: 'wrap',
+                        }}>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedEssaySubmission(null)}
+                                style={{
+                                    padding: '11px 18px',
+                                    border: '1px solid #d1d5db',
+                                    borderRadius: 8,
+                                    background: '#ffffff',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleSaveEssayEvaluation}
+                                style={{
+                                    padding: '11px 20px',
+                                    background: '#245b46',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    borderRadius: 8,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Simpan Penilaian
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            )}
+
+            {selectedModule7Submission && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        zIndex: 1100,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 20,
+                    }}
+                    onClick={() => setSelectedModule7Submission(null)}
+                >
+                    <section
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="module7-detail-title"
+                        onClick={(event) => event.stopPropagation()}
+                        style={{
+                            background: '#ffffff',
+                            width: '100%',
+                            maxWidth: 1000,
+                            maxHeight: '90vh',
+                            overflowY: 'auto',
+                            borderRadius: 16,
+                            padding: 24,
+                            boxSizing: 'border-box',
+                        }}
+                    >
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginBottom: 20,
+                        }}>
+                            <div>
+                                <h2 id="module7-detail-title" style={{ margin: 0, color: '#245b46' }}>
+                                    Detail Pengumpulan Modul 7
+                                </h2>
+                                <p style={{ marginBottom: 0, color: '#718096' }}>
+                                    {selectedModule7Submission.student_name} — {selectedModule7Submission.student_class || '-'}
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setSelectedModule7Submission(null)}
+                                style={{
+                                    padding: '8px 14px',
+                                    border: 'none',
+                                    borderRadius: 8,
+                                    background: '#eeeeee',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Tutup ✕
+                            </button>
+                        </div>
+
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                            gap: 12,
+                            marginBottom: 24,
+                        }}>
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Nomor Absen</small>
+                                <h3 style={{ margin: '6px 0 0' }}>
+                                    {selectedModule7Submission.attendance_number ?? '-'}
+                                </h3>
+                            </div>
+
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Skor Pilihan Ganda</small>
+                                <h3 style={{ margin: '6px 0 0' }}>
+                                    {selectedModule7Submission.mcq_score ?? 'Belum dinilai'} / {MODULE_7_QUESTIONS.length}
+                                </h3>
+                            </div>
+
+                            <div style={{ background: '#f3f7f5', padding: 14, borderRadius: 10 }}>
+                                <small>Waktu Pengumpulan</small>
+                                <p style={{ margin: '6px 0 0' }}>
+                                    {new Date(selectedModule7Submission.submitted_at).toLocaleString('id-ID')}
+                                </p>
+                            </div>
+                        </div>
+
+                        <h3 style={{ color: '#245b46', borderBottom: '2px solid #e2e8f0', paddingBottom: 10 }}>
+                            Jawaban Pilihan Ganda
+                        </h3>
+
+                        {MODULE_7_QUESTIONS.map((question, index) => {
+                            const answers =
+                                typeof selectedModule7Submission.mcq_answers === 'object' &&
+                                    selectedModule7Submission.mcq_answers !== null &&
+                                    !Array.isArray(selectedModule7Submission.mcq_answers)
+                                    ? selectedModule7Submission.mcq_answers as Record<string, unknown>
+                                    : {};
+
+                            const studentAnswer = answers[question.id];
+                            const isCorrect = studentAnswer === question.correctAnswer;
+
+                            return (
+                                <article
+                                    key={question.id}
+                                    style={{
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: 12,
+                                        padding: 16,
+                                        marginBottom: 16,
+                                    }}
+                                >
+                                    <h4 style={{ marginTop: 0 }}>
+                                        Soal {index + 1}
+                                    </h4>
+
+                                    {question.stimulus && (
+                                        <div style={{
+                                            background: '#f8fafc',
+                                            padding: 12,
+                                            borderRadius: 8,
+                                            marginBottom: 12,
+                                        }}>
+                                            <strong>Stimulus:</strong>
+                                            <p style={{ marginBottom: 0 }}>{question.stimulus}</p>
+                                        </div>
+                                    )}
+
+                                    <p style={{ fontWeight: 500 }}>{question.question}</p>
+
+                                    {question.options.map(option => {
+                                        const isStudentChoice = option.label === studentAnswer;
+                                        const isAnswerKey = option.label === question.correctAnswer;
+
+                                        return (
+                                            <div
+                                                key={option.label}
+                                                style={{
+                                                    padding: 10,
+                                                    marginBottom: 8,
+                                                    borderRadius: 8,
+                                                    background: isAnswerKey
+                                                        ? '#e8f5e9'
+                                                        : isStudentChoice
+                                                            ? '#ffebee'
+                                                            : '#f5f5f5',
+                                                    border: isAnswerKey
+                                                        ? '1px solid #4caf50'
+                                                        : isStudentChoice
+                                                            ? '1px solid #e57373'
+                                                            : '1px solid transparent',
+                                                }}
+                                            >
+                                                <strong>{option.label}.</strong> {option.text}
+
+                                                {isStudentChoice && (
+                                                    <strong> — Jawaban siswa</strong>
+                                                )}
+
+                                                {isAnswerKey && (
+                                                    <strong> — Kunci jawaban</strong>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+
+                                    <p style={{
+                                        color: typeof studentAnswer !== 'string'
+                                            ? '#757575'
+                                            : isCorrect ? '#2e7d32' : '#c62828',
+                                        fontWeight: 'bold',
+                                    }}>
+                                        {typeof studentAnswer !== 'string'
+                                            ? 'Siswa tidak menjawab soal ini'
+                                            : isCorrect
+                                                ? '✓ Jawaban siswa benar'
+                                                : '✗ Jawaban siswa belum tepat'}
+                                    </p>
+
+                                    {question.explanation && (
+                                        <div style={{
+                                            background: '#f3f7f5',
+                                            padding: 12,
+                                            borderRadius: 8,
+                                        }}>
+                                            <strong>Pembahasan:</strong>
+                                            <p style={{ marginBottom: 0 }}>{question.explanation}</p>
+                                        </div>
+                                    )}
+                                </article>
+                            );
+                        })}
+
+                        <h3 style={{
+                            color: '#245b46',
+                            borderBottom: '2px solid #e2e8f0',
+                            paddingBottom: 10,
+                            marginTop: 28,
+                        }}>
+                            Jawaban Esai
+                        </h3>
+
+                        {renderEssayAnswers(selectedModule7Submission.essay_answers)}
+                    </section>
+                </div>
+            )}
+
         </main>
     );
 };
