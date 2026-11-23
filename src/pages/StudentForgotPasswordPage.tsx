@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 import './StudentAuth.css';
 
 const StudentForgotPasswordPage: React.FC = () => {
@@ -14,6 +14,10 @@ const StudentForgotPasswordPage: React.FC = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        if (!isSupabaseConfigured) {
+            setError('Layanan pemulihan kata sandi belum tersedia. Silakan coba kembali nanti.');
+            return;
+        }
 
         if (!email.trim()) {
             setError('Masukkan alamat email terlebih dahulu.');

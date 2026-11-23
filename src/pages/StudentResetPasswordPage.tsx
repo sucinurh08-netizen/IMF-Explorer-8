@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 import './StudentAuth.css';
 
 const StudentResetPasswordPage: React.FC = () => {
@@ -17,6 +17,10 @@ const StudentResetPasswordPage: React.FC = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        if (!isSupabaseConfigured) {
+            setError('Layanan pengaturan ulang kata sandi belum tersedia. Silakan coba kembali nanti.');
+            return;
+        }
 
         if (password.length < 8) {
             setError('Kata sandi minimal 8 karakter.');

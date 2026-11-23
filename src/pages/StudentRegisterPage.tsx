@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 import './StudentAuth.css';
 
 const StudentRegisterPage: React.FC = () => {
@@ -20,6 +20,10 @@ const StudentRegisterPage: React.FC = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        if (!isSupabaseConfigured) {
+            setError('Layanan pendaftaran belum tersedia. Silakan coba kembali nanti.');
+            return;
+        }
 
         if (!nama.trim() || !kelas.trim() || !email.trim() || !password || !confirmPassword) {
             setError('Semua kolom wajib diisi.');

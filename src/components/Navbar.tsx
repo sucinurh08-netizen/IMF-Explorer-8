@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { User } from '@supabase/supabase-js';
 import type { IMFProgress } from '../types/curriculum';
 import { calculateProgressPercentage } from '../utils/storage';
-import { supabase } from '../utils/supabase';
-
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 interface NavbarProps {
   progress: IMFProgress;
   onOpenResetModal: () => void;
@@ -20,6 +19,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(session?.user ?? null);
     });
@@ -36,7 +40,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (!isSupabaseConfigured) {
+      setCurrentUser(null);
+      return;
+    }
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error('Gagal keluar dari akun:', error);
+      return;
+    }
+
     setCurrentUser(null);
   };
 

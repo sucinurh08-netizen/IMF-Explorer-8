@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 import './StudentAuth.css';
 
 const StudentLoginPage: React.FC = () => {
@@ -18,6 +18,10 @@ const StudentLoginPage: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        if (!isSupabaseConfigured) {
+            setError('Layanan login belum tersedia. Silakan masuk sebagai tamu untuk mengakses materi pembelajaran.');
+            return;
+        }
 
         if (!email.trim() || !password) {
             setError('Email dan kata sandi wajib diisi.');
@@ -60,8 +64,15 @@ const StudentLoginPage: React.FC = () => {
 
 
 
+
     const handleGoogleLogin = async () => {
         setError('');
+
+        if (!isSupabaseConfigured) {
+            setError('Layanan login Google belum tersedia. Silakan masuk sebagai tamu untuk mengakses materi pembelajaran.');
+            return;
+        }
+
         setLoading(true);
 
         try {
