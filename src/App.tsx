@@ -142,12 +142,18 @@ export const App: React.FC = () => {
   };
 
   // Confirm progress reset
-  const handleConfirmReset = () => {
-    const fresh = resetProgress();
-    setProgress(fresh);
-    setIsResetModalOpen(false);
-    showToast('Progres pembelajaran berhasil diatur ulang ke awal.');
-  };
+const handleConfirmReset = () => {
+  const success = resetProgress();
+
+  if (!success) {
+    showToast('Gagal mengatur ulang progres. Silakan coba lagi.');
+    return;
+  }
+
+  setProgress(getSavedProgress());
+  setIsResetModalOpen(false);
+  showToast('Progres pembelajaran berhasil diatur ulang ke awal.');
+};
 
   const handleLaunchModule = (moduleId: string) => {
     const mod = LEARNING_MODULES.find((m) => m.id === moduleId);

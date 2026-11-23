@@ -93,17 +93,23 @@ export function markPageCompleted(pageId: string): IMFProgress {
 }
 
 /**
- * Menghapus progres dan mengembalikan ke status awal
+ * Menghapus progres dan mengembalikan status keberhasilan.
  */
-export function resetProgress(): IMFProgress {
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
-      console.warn('[IMF Explorer] Gagal menghapus localStorage key', e);
-    }
+export function resetProgress(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
   }
-  return INITIAL_PROGRESS;
+
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    return true;
+  } catch (error) {
+    console.error(
+      '[IMF Explorer] Gagal menghapus progres dari localStorage',
+      error
+    );
+    return false;
+  }
 }
 
 /**

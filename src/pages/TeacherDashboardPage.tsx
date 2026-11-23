@@ -116,7 +116,7 @@ const TeacherDashboardPage: React.FC = () => {
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [studentError, setStudentError] = useState('');
     const [showStudentData, setShowStudentData] = useState(false);
-
+    const [showEvaluationRecap, setShowEvaluationRecap] = useState(false);
     const [showSubmissions, setShowSubmissions] = useState(false);
     const [activeSubmissionTab, setActiveSubmissionTab] =
         useState<'esai' | 'modul7'>('esai');
@@ -152,8 +152,8 @@ const TeacherDashboardPage: React.FC = () => {
         useState<Record<number, string>>({});
 
 
-    const fetchStudents = async () => {
-        setLoadingStudents(true);
+    const fetchStudents = async (silent = false) => {
+        if (!silent) setLoadingStudents(true);
         setStudentError('');
 
         try {
@@ -167,21 +167,23 @@ const TeacherDashboardPage: React.FC = () => {
 
             setStudents(data ?? []);
         } catch (error) {
-            console.error('Error mengambil data pengumpulan tugas:', error);
+            console.error('Error mengambil data siswa:', error);
 
             const errorMessage =
                 error instanceof Error
                     ? error.message
                     : typeof error === 'object' && error !== null && 'message' in error
                         ? String(error.message)
-                        : 'Gagal mengambil data pengumpulan tugas.';
+                        : 'Gagal mengambil data siswa.';
 
-            setSubmissionError(errorMessage);
+            setStudentError(errorMessage);
+        } finally {
+            if (!silent) setLoadingStudents(false);
         }
     };
 
-    const fetchSubmissions = async () => {
-        setLoadingSubmissions(true);
+    const fetchSubmissions = async (silent = false) => {
+        if (!silent) setLoadingSubmissions(true);
         setSubmissionError('');
 
         try {
@@ -209,7 +211,7 @@ const TeacherDashboardPage: React.FC = () => {
                     : 'Gagal mengambil data pengumpulan tugas.'
             );
         } finally {
-            setLoadingSubmissions(false);
+            if (!silent) setLoadingSubmissions(false);
         }
     };
     const fetchItemAnalysis = async () => {
@@ -389,8 +391,8 @@ const TeacherDashboardPage: React.FC = () => {
         (question) => question.id === selectedAnalysisQuestion
     );
 
-    const fetchDiagnosticSubmissions = async () => {
-        setLoadingDiagnostic(true);
+    const fetchDiagnosticSubmissions = async (silent = false) => {
+        if (!silent) setLoadingDiagnostic(true);
         setDiagnosticError('');
 
         try {
@@ -447,13 +449,13 @@ const TeacherDashboardPage: React.FC = () => {
             console.error('Gagal mengambil hasil tes diagnostik:', error);
             setDiagnosticError('Gagal memuat hasil tes diagnostik.');
         } finally {
-            setLoadingDiagnostic(false);
+            if (!silent) setLoadingDiagnostic(false);
         }
     };
 
 
-    const fetchDiscoveryPosts = async () => {
-        setLoadingDiscovery(true);
+    const fetchDiscoveryPosts = async (silent = false) => {
+        if (!silent) setLoadingDiscovery(true);
         setDiscoveryError('');
 
         try {
@@ -551,12 +553,25 @@ const TeacherDashboardPage: React.FC = () => {
             console.error('Gagal mengambil temuan Discovery Wall:', error);
             setDiscoveryError('Temuan dan tanggapan siswa gagal dimuat.');
         } finally {
-            setLoadingDiscovery(false);
+            if (!silent) setLoadingDiscovery(false);
         }
     };
 
 
+    const handleShowEvaluationRecap = async () => {
+        setShowStudentData(false);
+        setShowSubmissions(false);
+        setShowDiagnostic(false);
+        setShowDiscovery(false);
+        setShowTeacherForm(false);
+        setShowItemAnalysis(false);
+        setShowEvaluationRecap(true);
+        await Promise.all([fetchStudents(), fetchSubmissions(), fetchDiscoveryPosts(), fetchDiagnosticSubmissions()]);
+        setTimeout(() => document.getElementById('evaluation-recap-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    };
+
     const handleShowSubmissions = async () => {
+        setShowEvaluationRecap(false);
         setShowStudentData(false);
         setShowDiagnostic(false);
         setShowDiscovery(false);
@@ -577,6 +592,7 @@ const TeacherDashboardPage: React.FC = () => {
 
 
     const handleShowDiagnostic = async () => {
+        setShowEvaluationRecap(false);
         setShowStudentData(false);
         setShowSubmissions(false);
         setShowDiscovery(false);
@@ -627,8 +643,31 @@ const TeacherDashboardPage: React.FC = () => {
         void checkAccess();
     }, [navigate]);
 
+    // Perbarui rekap secara berkala selama halaman rekap sedang dibuka.
+    // Polling ini tidak memerlukan konfigurasi Supabase Realtime di dashboard/database.
+    useEffect(() => {
+        if (!showEvaluationRecap) return;
+
+        const refreshEvaluationRecap = () => {
+            void Promise.all([
+                fetchStudents(true),
+                fetchSubmissions(true),
+                fetchDiscoveryPosts(true),
+                fetchDiagnosticSubmissions(true),
+            ]);
+        };
+
+        const refreshInterval = window.setInterval(
+            refreshEvaluationRecap,
+            10000
+        );
+
+        return () => window.clearInterval(refreshInterval);
+    }, [showEvaluationRecap]);
+
 
     const handleShowStudents = async () => {
+        setShowEvaluationRecap(false);
         setShowSubmissions(false);
         setShowDiagnostic(false);
         setShowDiscovery(false);
@@ -646,42 +685,46 @@ const TeacherDashboardPage: React.FC = () => {
         }, 100);
     };
 
-    const handleShowItemAnalysis = async () => {
-        setShowStudentData(false);
-        setShowSubmissions(false);
-        setShowDiagnostic(false);
-        setShowDiscovery(false);
-        setShowTeacherForm(false);
-        setSelectedDiagnostic(null);
+const handleShowItemAnalysis = async () => {
+        setShowEvaluationRecap(false);
+    setShowStudentData(false);
+    setShowSubmissions(false);
+    setShowDiagnostic(false);
+    setShowDiscovery(false);
+    setShowTeacherForm(false);
+    setSelectedDiagnostic(null);
+    setSelectedAnalysisQuestion(null);
 
-        setShowItemAnalysis(true);
-        await fetchItemAnalysis();
+    setShowItemAnalysis(true);
+    await fetchItemAnalysis();
 
-        setTimeout(() => {
-            document.querySelector('.item-analysis-section')?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 150);
-    };
-    const handleShowDiscovery = async () => {
-        setShowStudentData(false);
-        setShowSubmissions(false);
-        setShowDiagnostic(false);
-        setShowTeacherForm(false);
-        setSelectedDiagnostic(null);
-        setShowItemAnalysis(false);
+    setTimeout(() => {
+        document.querySelector('.item-analysis-section')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }, 150);
+};
 
-        setShowDiscovery(true);
-        await fetchDiscoveryPosts();
+const handleShowDiscovery = async () => {
+        setShowEvaluationRecap(false);
+    setShowStudentData(false);
+    setShowSubmissions(false);
+    setShowDiagnostic(false);
+    setShowTeacherForm(false);
+    setSelectedDiagnostic(null);
+    setShowItemAnalysis(false);
 
-        setTimeout(() => {
-            document.getElementById('discovery-section')?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
-    };
+    setShowDiscovery(true);
+    await fetchDiscoveryPosts();
+
+    setTimeout(() => {
+        document.getElementById('discovery-section')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }, 100);
+};
     const handleSubmitDiscoveryFeedback = async (postId: number) => {
         const feedback = discoveryFeedbackInputs[postId]?.trim();
 
@@ -919,6 +962,16 @@ const TeacherDashboardPage: React.FC = () => {
         .sort((a, b) => b.incorrectPercentage - a.incorrectPercentage);
 
     const highestErrorQuestion = diagnosticRecommendations[0];
+    const normalizeStudentKey = (name: string, className: string | null | undefined) => `${name.trim().toLowerCase()}|${(className || '').trim().toLowerCase()}`;
+    const module7Keys = new Set(module7Submissions.map(item => normalizeStudentKey(item.student_name, item.student_class)));
+    const essayKeys = new Set(essaySubmissions.map(item => normalizeStudentKey(item.student_name, item.student_class)));
+    const discoveryKeys = new Set(discoveryPosts.map(item => normalizeStudentKey(item.name, item.className)));
+    const evaluationKeys = new Set([...module7Keys, ...diagnosticSubmissions.map(item => normalizeStudentKey(item.student_name, item.student_class))]);
+    const activityKeys = new Set([...module7Keys, ...essayKeys, ...discoveryKeys, ...diagnosticSubmissions.map(item => normalizeStudentKey(item.student_name, item.student_class))]);
+    const completedCount = students.filter(student => module7Keys.has(normalizeStudentKey(student.nama, student.kelas))).length;
+    const learningCount = students.filter(student => activityKeys.has(normalizeStudentKey(student.nama, student.kelas)) && !evaluationKeys.has(normalizeStudentKey(student.nama, student.kelas))).length;
+    const evaluatedCount = students.filter(student => evaluationKeys.has(normalizeStudentKey(student.nama, student.kelas))).length;
+
     return (
         <main className="teacher-dashboard">
             <header className="dashboard-header">
@@ -986,6 +1039,10 @@ const TeacherDashboardPage: React.FC = () => {
                             >
                                 Lihat Discovery Wall
                             </button>
+                        ) : item.title === 'Rekap Evaluasi' ? (
+                            <button className="menu-action-button" onClick={handleShowEvaluationRecap}>
+                                Lihat Rekap Evaluasi
+                            </button>
                         ) : item.title === 'Analisis Butir Soal Modul 7' ? (
                             <button
                                 className="menu-action-button"
@@ -1016,6 +1073,32 @@ const TeacherDashboardPage: React.FC = () => {
                     </article>
                 ))}
             </section>
+            {showEvaluationRecap && (
+                <section id="evaluation-recap-section" style={{ background: '#fff', padding: 24, borderRadius: 16, marginTop: 24, boxShadow: '0 5px 20px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+                        <div><h2 style={{ color: '#245b46', margin: '0 0 4px' }}>Rekap Evaluasi Pembelajaran</h2><p style={{ color: '#718096', margin: 0 }}>Dashboard pemantauan perkembangan belajar siswa</p></div>
+                        <button className="menu-action-button" onClick={handleShowEvaluationRecap} disabled={loadingStudents || loadingSubmissions || loadingDiscovery || loadingDiagnostic}>Muat ulang</button>
+                    </div>
+                    {(studentError || submissionError || discoveryError || diagnosticError) && <p style={{ color: '#b91c1c' }}>{studentError || submissionError || discoveryError || diagnosticError}</p>}
+                    {(loadingStudents || loadingSubmissions || loadingDiscovery || loadingDiagnostic) ? <p>Memuat data aktual siswa...</p> : <>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 24 }}>
+                            {[
+                                ['Total siswa', students.length, 'Terdaftar pada data akun siswa'],
+                                ['Selesai belajar', completedCount, 'Telah mengumpulkan evaluasi Modul 7'],
+                                ['Sedang belajar', learningCount, 'Ada aktivitas tercatat, belum terdeteksi evaluasi'],
+                                ['Sudah evaluasi', evaluatedCount, 'Mengumpulkan tes diagnostik atau Modul 7'],
+                            ].map(([label, value, note]) => <div key={String(label)} style={{ padding: 18, borderRadius: 12, background: '#f0f7f3', border: '1px solid #d8e9df' }}><p style={{ margin: 0, color: '#526581' }}>{label}</p><h2 style={{ margin: '8px 0', color: '#245b46', fontSize: 30 }}>{value}</h2><small style={{ color: '#718096' }}>{note}</small></div>)}
+                        </div>
+                        <h3 style={{ color: '#245b46' }}>Tabel perkembangan siswa</h3>
+                        <div style={{ overflowX: 'auto' }}><table style={{ width: '100%', minWidth: 650, borderCollapse: 'collapse' }}><thead><tr style={{ background: '#eaf3ee', textAlign: 'left' }}>{['Nama siswa', 'Progres', 'Evaluasi', 'Data aktual'].map(label => <th key={label} style={{ padding: 12 }}>{label}</th>)}</tr></thead><tbody>
+                            {students.map(student => { const key = normalizeStudentKey(student.nama, student.kelas); const hasActivity = activityKeys.has(key); const hasEvaluation = evaluationKeys.has(key); const isComplete = module7Keys.has(key); return <tr key={student.user_id} style={{ borderBottom: '1px solid #e5e7eb' }}><td style={{ padding: 12 }}>{student.nama}<br/><small style={{ color: '#718096' }}>{student.kelas || '-'}</small></td><td style={{ padding: 12 }}>{isComplete ? 'Selesai belajar' : hasActivity ? 'Aktivitas tercatat' : 'Belum ada aktivitas'}</td><td style={{ padding: 12 }}>{hasEvaluation ? 'Sudah evaluasi' : 'Belum evaluasi'}</td><td style={{ padding: 12 }}>{[module7Keys.has(key) ? 'Modul 7' : '', diagnosticSubmissions.some(item => normalizeStudentKey(item.student_name, item.student_class) === key) ? 'Tes diagnostik' : '', essayKeys.has(key) ? 'Esai' : '', discoveryKeys.has(key) ? 'Discovery Wall' : ''].filter(Boolean).join(', ') || 'Belum ada data'}</td></tr>; })}
+                            {students.length === 0 && <tr><td colSpan={4} style={{ padding: 16, textAlign: 'center' }}>Belum ada data siswa.</td></tr>}
+                        </tbody></table></div>
+                        <p style={{ color: '#718096', fontSize: 12, marginTop: 14 }}>Catatan: status “Sedang belajar” di sini berarti ada aktivitas yang tercatat tetapi belum ada evaluasi, bukan indikator aktivitas real-time. Pencocokan data pengumpulan menggunakan nama dan kelas siswa.</p>
+                    </>}
+                    <button style={{ marginTop: 16 }} onClick={() => setShowEvaluationRecap(false)}>Tutup rekap</button>
+                </section>
+            )}
             {showItemAnalysis && (
                 <section className="item-analysis-section">
 
@@ -1498,7 +1581,7 @@ const TeacherDashboardPage: React.FC = () => {
 
                         <div style={{ display: 'flex', gap: 8 }}>
                             <button
-                                onClick={fetchStudents}
+                                onClick={() => void fetchStudents()}
                                 disabled={loadingStudents}
                             >
                                 {loadingStudents ? 'Memuat...' : 'Muat Ulang'}
@@ -1843,7 +1926,7 @@ const TeacherDashboardPage: React.FC = () => {
 
                         <div style={{ display: 'flex', gap: 8 }}>
                             <button
-                                onClick={fetchDiscoveryPosts}
+                                onClick={() => void fetchDiscoveryPosts()}
                                 disabled={loadingDiscovery}
                             >
                                 {loadingDiscovery ? 'Memuat...' : 'Muat Ulang'}
@@ -2325,7 +2408,7 @@ const TeacherDashboardPage: React.FC = () => {
 
                         <div style={{ display: 'flex', gap: 8 }}>
                             <button
-                                onClick={fetchSubmissions}
+                                onClick={() => void fetchSubmissions()}
                                 disabled={loadingSubmissions}
                             >
                                 {loadingSubmissions ? 'Memuat...' : 'Muat Ulang'}
