@@ -214,6 +214,8 @@ export default function LondonDispersionSimulation() {
                 </p>
             </div>
 
+            <div className="module2-lab-layout">
+                <div className="module2-lab-layout__main">
             {/* Area simulasi */}
             <div
                 style={{
@@ -297,19 +299,17 @@ export default function LondonDispersionSimulation() {
             </div>
 
             {/* Tombol kendali */}
-            <div
-                style={{
-                    display: 'flex',
-                    gap: '8px',
-                    flexWrap: 'wrap',
-                    marginTop: '16px',
-                }}
-            >
-                <button onClick={startAutomatic} disabled={isRunning}>
+            <div className="module2-lab-controls">
+                <button
+                    className="module2-lab-button module2-lab-button--primary"
+                    onClick={startAutomatic}
+                    disabled={isRunning}
+                >
                     Mulai otomatis
                 </button>
 
                 <button
+                    className="module2-lab-button module2-lab-button--secondary"
                     onClick={() => setIsRunning(false)}
                     disabled={!isRunning}
                 >
@@ -317,25 +317,36 @@ export default function LondonDispersionSimulation() {
                 </button>
 
                 <button
+                    className="module2-lab-button module2-lab-button--secondary"
                     onClick={() => setIsRunning(true)}
                     disabled={isRunning}
                 >
                     Lanjutkan
                 </button>
 
-                <button onClick={nextStage} disabled={stage === 2}>
+                <button
+                    className="module2-lab-button module2-lab-button--primary"
+                    onClick={nextStage}
+                    disabled={stage === 2}
+                >
                     Langkah berikutnya
                 </button>
 
-                <button onClick={resetSimulation}>
+                <button
+                    className="module2-lab-button module2-lab-button--outline"
+                    onClick={resetSimulation}
+                >
                     Ulangi
                 </button>
             </div>
 
+                </div>
+
             {/* Petunjuk penggunaan */}
             <div
+                className="module2-lab-layout__instructions"
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '18px',
                     borderRadius: '12px',
                     background: '#f0fdf4',
@@ -377,6 +388,7 @@ export default function LondonDispersionSimulation() {
                         proses dari awal.
                     </li>
                 </ol>
+            </div>
             </div>
 
             {/* Penjelasan setiap tahap */}

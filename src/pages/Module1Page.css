@@ -13,6 +13,102 @@
     font-family: inherit;
 }
 
+.module2-lab-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+    align-items: start;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.module2-lab-layout__main,
+.module2-lab-layout__instructions {
+    min-width: 0;
+}
+
+@media (max-width: 760px) {
+    .module2-lab-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.module2-lab-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.module2-lab-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(20, 35, 27, 0.14);
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.module2-lab-button--primary {
+    background: var(--color-deep-forest);
+    border-color: var(--color-deep-forest);
+    color: #fff;
+}
+
+.module2-lab-button--primary:hover:not(:disabled) {
+    background: var(--color-forest-dark);
+    border-color: var(--color-forest-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 9px rgba(20, 35, 27, 0.2);
+}
+
+.module2-lab-button--secondary {
+    background: var(--color-soft-mint);
+    border-color: var(--color-sage-green);
+    color: var(--color-deep-forest);
+}
+
+.module2-lab-button--secondary:hover:not(:disabled) {
+    background: #dcebd8;
+    border-color: var(--color-forest-green);
+    transform: translateY(-1px);
+}
+
+.module2-lab-button--outline {
+    background: #fff;
+    border-color: var(--color-forest-green);
+    color: var(--color-deep-forest);
+}
+
+.module2-lab-button--outline:hover:not(:disabled) {
+    background: #f0f7f3;
+    transform: translateY(-1px);
+}
+
+.module2-lab-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    box-shadow: none;
+}
+
+.module2-lab-button:focus-visible {
+    outline: 3px solid rgba(57, 118, 90, 0.35);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .module2-lab-controls .module2-lab-button {
+        flex: 1 1 100%;
+    }
+}
+
 /* Header */
 
 .lesson-header {

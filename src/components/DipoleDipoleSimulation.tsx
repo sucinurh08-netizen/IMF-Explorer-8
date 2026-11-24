@@ -272,16 +272,115 @@ export default function DipoleDipoleSimulation() {
     };
 
     return (
-        <div
-            style={{
-                background: '#f0f7ff',
-                border: '1px solid #cbdff5',
-                borderRadius: 16,
-                padding: 20,
-                margin: '24px 0',
-                color: '#17324d',
-            }}
-        >
+        <div className="dipole-lab">
+            <style>{`
+                .dipole-lab {
+                    background: #f0f7ff;
+                    border: 1px solid #cbdff5;
+                    border-radius: 16px;
+                    padding: 20px;
+                    margin: 24px 0;
+                    color: #17324d;
+                }
+
+                .dipole-lab .lab-buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 14px;
+                }
+
+                .dipole-lab .lab-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 7px;
+                    min-height: 40px;
+                    padding: 10px 17px;
+                    border: 1px solid #245b45;
+                    border-radius: 9px;
+                    background: linear-gradient(135deg, #39765a, #245b45);
+                    color: #ffffff;
+                    font-size: 13px;
+                    font-weight: 600;
+                    font-family: inherit;
+                    cursor: pointer;
+                    box-shadow: 0 3px 0 #1a4232, 0 4px 9px rgba(36, 91, 69, 0.15);
+                    transition: all 0.18s ease;
+                }
+
+                .dipole-lab .lab-btn:hover {
+                    background: linear-gradient(135deg, #458969, #2d684e);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 0 #1a4232, 0 7px 13px rgba(36, 91, 69, 0.2);
+                }
+
+                .dipole-lab .lab-btn:active {
+                    transform: translateY(2px);
+                    box-shadow: 0 1px 0 #1a4232;
+                }
+
+                .dipole-lab .lab-btn:focus-visible,
+                .dipole-lab .lab-select:focus-visible {
+                    outline: 3px solid rgba(57, 118, 90, 0.3);
+                    outline-offset: 3px;
+                }
+
+                .dipole-lab .lab-btn-reset {
+                    background: linear-gradient(135deg, #64748b, #475569);
+                    border-color: #475569;
+                    box-shadow: 0 3px 0 #334155, 0 4px 9px rgba(71, 85, 105, 0.15);
+                }
+
+                .dipole-lab .lab-btn-reset:hover {
+                    background: linear-gradient(135deg, #718198, #526277);
+                    box-shadow: 0 5px 0 #334155, 0 7px 13px rgba(71, 85, 105, 0.2);
+                }
+
+                .dipole-lab .lab-btn-blue {
+                    background: linear-gradient(135deg, #3986c8, #246da8);
+                    border-color: #246da8;
+                    box-shadow: 0 3px 0 #194f7d, 0 4px 9px rgba(36, 109, 168, 0.15);
+                }
+
+                .dipole-lab .lab-btn-blue:hover {
+                    background: linear-gradient(135deg, #4a96d5, #2b7dbb);
+                    box-shadow: 0 5px 0 #194f7d, 0 7px 13px rgba(36, 109, 168, 0.2);
+                }
+
+                .dipole-lab .lab-select {
+                    display: block;
+                    width: 100%;
+                    max-width: 320px;
+                    padding: 11px 38px 11px 13px;
+                    margin-top: 9px;
+                    border-radius: 9px;
+                    border: 1px solid #9db9d3;
+                    background: #ffffff;
+                    color: #17324d;
+                    font-size: 14px;
+                    font-weight: 600;
+                    font-family: inherit;
+                    cursor: pointer;
+                }
+
+                @media (max-width: 520px) {
+                    .dipole-lab {
+                        padding: 14px;
+                    }
+
+                    .dipole-lab .lab-btn {
+                        flex: 1 1 100%;
+                    }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .dipole-lab .lab-btn {
+                        transition: none;
+                    }
+                }
+            `}</style>
+
             <h2 style={{ marginTop: 0 }}>Laboratorium Mini: Gaya Dipol-Dipol</h2>
 
             <p>
@@ -296,19 +395,11 @@ export default function DipoleDipoleSimulation() {
 
             <select
                 id="dipole-choice"
+                className="lab-select"
                 value={moleculeType}
                 onChange={(event) => {
                     setMoleculeType(event.target.value as MoleculeType);
                     reset();
-                }}
-                style={{
-                    display: 'block',
-                    width: '100%',
-                    maxWidth: 320,
-                    padding: 10,
-                    marginTop: 8,
-                    borderRadius: 8,
-                    border: '1px solid #9db9d3',
                 }}
             >
                 <option value="HCl">HCl — Hidrogen klorida</option>
@@ -318,6 +409,8 @@ export default function DipoleDipoleSimulation() {
 
             <p style={{ fontSize: 13 }}>{info.description}</p>
 
+            <div className="module2-lab-layout">
+                <div className="module2-lab-layout__main">
             <div
                 style={{
                     background: 'white',
@@ -392,12 +485,15 @@ export default function DipoleDipoleSimulation() {
                 </p>
             </div>
 
+                </div>
+
+                <div className="module2-lab-layout__instructions">
             <div
                 style={{
                     background: 'white',
                     padding: 12,
                     borderRadius: 10,
-                    marginTop: 12,
+                    marginTop: 0,
                 }}
             >
                 <strong>4. Atur arah molekul</strong>
@@ -406,20 +502,22 @@ export default function DipoleDipoleSimulation() {
                     molekul sebesar 45°.
                 </p>
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button onClick={() => rotateMolecule(0, -45)}>
-                        Putar molekul 1 ke kiri 45°
+                <div className="lab-buttons">
+                    <button className="lab-btn" onClick={() => rotateMolecule(0, -45)}>
+                        ↶ Putar molekul 1 ke kiri 45°
                     </button>
-                    <button onClick={() => rotateMolecule(0, 45)}>
-                        Putar molekul 1 ke kanan 45°
+                    <button className="lab-btn" onClick={() => rotateMolecule(0, 45)}>
+                        ↷ Putar molekul 1 ke kanan 45°
                     </button>
-                    <button onClick={() => rotateMolecule(1, -45)}>
-                        Putar molekul 2 ke kiri 45°
+                    <button className="lab-btn" onClick={() => rotateMolecule(1, -45)}>
+                        ↶ Putar molekul 2 ke kiri 45°
                     </button>
-                    <button onClick={() => rotateMolecule(1, 45)}>
-                        Putar molekul 2 ke kanan 45°
+                    <button className="lab-btn" onClick={() => rotateMolecule(1, 45)}>
+                        ↷ Putar molekul 2 ke kanan 45°
                     </button>
-                    <button onClick={reset}>Ulangi eksperimen</button>
+                    <button className="lab-btn lab-btn-reset" onClick={reset}>
+                        ↻ Ulangi eksperimen
+                    </button>
                 </div>
             </div>
 
@@ -456,11 +554,15 @@ export default function DipoleDipoleSimulation() {
                     </p>
                 )}
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button onClick={() => setStep((s) => (s + 1) % 3)}>
-                        Percobaan berikutnya
+                <div className="lab-buttons">
+                    <button className="lab-btn lab-btn-blue" onClick={() => setStep((s) => (s + 1) % 3)}>
+                        → Percobaan berikutnya
                     </button>
-                    <button onClick={() => setStep(0)}>Kembali ke percobaan 1</button>
+                    <button className="lab-btn lab-btn-reset" onClick={() => setStep(0)}>
+                        ↶ Kembali ke percobaan 1
+                    </button>
+                </div>
+            </div>
                 </div>
             </div>
 
@@ -512,18 +614,11 @@ export default function DipoleDipoleSimulation() {
             </div>
 
             <button
+                className="lab-btn lab-btn-blue"
                 onClick={() => setShowExplanation((value) => !value)}
-                style={{
-                    marginTop: 14,
-                    padding: '10px 16px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: '#246da8',
-                    color: 'white',
-                    cursor: 'pointer',
-                }}
+                style={{ marginTop: 14 }}
             >
-                {showExplanation ? 'Tutup penjelasan konsep' : 'Lihat penjelasan konsep'}
+                {showExplanation ? '▲ Tutup penjelasan konsep' : '▼ Lihat penjelasan konsep'}
             </button>
 
             {showExplanation && (

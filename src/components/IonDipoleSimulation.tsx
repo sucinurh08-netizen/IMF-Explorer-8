@@ -252,10 +252,12 @@ export default function IonDipoleSimulation() {
                 </p>
             </div>
 
+            <div className="module2-lab-layout">
+                <div className="module2-lab-layout__main">
             {/* Area simulasi */}
             <div
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '12px',
                     background: 'white',
                     borderRadius: '14px',
@@ -358,45 +360,49 @@ export default function IonDipoleSimulation() {
             </div>
 
             {/* Kendali simulasi */}
-            <div
-                style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '8px',
-                    marginTop: '16px',
-                }}
-            >
-                <button
-                    onClick={() =>
-                        setStage((previous) =>
-                            previous < 2 ? ((previous + 1) as Stage) : 2
-                        )
-                    }
-                    disabled={stage === 2}
-                >
-                    Langkah berikutnya
-                </button>
+            
+{/* Kendali simulasi */}
+<div className="simulation-controls">
+    <button
+        className="simulation-btn simulation-btn--primary"
+        onClick={() =>
+            setStage((previous) =>
+                previous < 2 ? ((previous + 1) as Stage) : 2
+            )
+        }
+        disabled={stage === 2}
+    >
+        Langkah berikutnya →
+    </button>
 
-                <button
-                    onClick={() =>
-                        setStage((previous) =>
-                            previous > 0 ? ((previous - 1) as Stage) : 0
-                        )
-                    }
-                    disabled={stage === 0}
-                >
-                    Langkah sebelumnya
-                </button>
+    <button
+        className="simulation-btn simulation-btn--secondary"
+        onClick={() =>
+            setStage((previous) =>
+                previous > 0 ? ((previous - 1) as Stage) : 0
+            )
+        }
+        disabled={stage === 0}
+    >
+        ← Langkah sebelumnya
+    </button>
 
-                <button onClick={resetSimulation}>
-                    Ulangi simulasi
-                </button>
-            </div>
+    <button
+        className="simulation-btn simulation-btn--outline"
+        onClick={resetSimulation}
+    >
+        ↻ Ulangi simulasi
+    </button>
+</div>
+
+
+                </div>
 
             {/* Petunjuk penggunaan */}
             <div
+                className="module2-lab-layout__instructions"
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '18px',
                     borderRadius: '12px',
                     background: '#f0fdf4',
@@ -436,6 +442,7 @@ export default function IonDipoleSimulation() {
                         untuk memahami perbedaan kedua interaksi.
                     </li>
                 </ol>
+            </div>
             </div>
 
             {/* Penjelasan tiap tahap */}

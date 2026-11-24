@@ -255,10 +255,12 @@ export default function WaterEvaporationSimulation() {
                 fase air.
             </p>
 
+            <div className="module2-lab-layout">
+                <div className="module2-lab-layout__main">
             {/* Area simulasi */}
             <div
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '12px',
                     background: 'white',
                     border: '1px solid #e2e8f0',
@@ -405,84 +407,94 @@ export default function WaterEvaporationSimulation() {
             </div>
 
             {/* Kontrol simulasi */}
-            <div
-                style={{
-                    marginTop: '16px',
-                    padding: '16px',
-                    background: 'white',
-                    borderRadius: '12px',
-                    border: '1px solid #e2e8f0',
-                }}
-            >
-                <strong>Kontrol Simulasi</strong>
+            
+{/* Kontrol simulasi */}
+<div
+    style={{
+        marginTop: '16px',
+        padding: '16px',
+        background: 'white',
+        borderRadius: '12px',
+        border: '1px solid #e2e8f0',
+    }}
+>
+    <strong>Kontrol Simulasi</strong>
 
-                <div
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '8px',
-                        marginTop: '12px',
-                    }}
-                >
-                    <button onClick={heatWater}>
-                        Panaskan (+15)
-                    </button>
+    <div className="simulation-controls">
+        <button
+            className="simulation-btn simulation-btn--primary"
+            onClick={heatWater}
+        >
+            🔥 Panaskan (+15)
+        </button>
 
-                    <button onClick={coolWater}>
-                        Dinginkan (−15)
-                    </button>
+        <button
+            className="simulation-btn simulation-btn--secondary"
+            onClick={coolWater}
+        >
+            ❄ Dinginkan (−15)
+        </button>
 
-                    <button onClick={() => setIsRunning(!isRunning)}>
-                        {isRunning ? 'Jeda gerakan' : 'Lanjutkan gerakan'}
-                    </button>
+        <button
+            className="simulation-btn simulation-btn--secondary"
+            onClick={() => setIsRunning(!isRunning)}
+        >
+            {isRunning ? 'Ⅱ Jeda gerakan' : '▶ Lanjutkan gerakan'}
+        </button>
 
-                    <button onClick={resetSimulation}>
-                        Ulangi
-                    </button>
+        <button
+            className="simulation-btn simulation-btn--outline"
+            onClick={resetSimulation}
+        >
+            ↻ Ulangi
+        </button>
+    </div>
+
+    <div style={{ marginTop: '18px' }}>
+        <label
+            htmlFor="evaporation-temperature"
+            style={{ fontWeight: 'bold', color: '#334155' }}
+        >
+            Tingkat pemanasan model: {temperature}%
+        </label>
+
+        <input
+            id="evaporation-temperature"
+            type="range"
+            min="0"
+            max="100"
+            value={temperature}
+            onChange={(event) =>
+                setTemperature(Number(event.target.value))
+            }
+            style={{
+                display: 'block',
+                width: '100%',
+                marginTop: '8px',
+            }}
+        />
+
+        <p
+            style={{
+                fontSize: '12px',
+                color: '#64748b',
+                marginBottom: 0,
+            }}
+        >
+            Geser pengaturan untuk mengubah tingkat
+            pemanasan pada model. Nilai ini bukan
+            pengukuran suhu Celsius yang sebenarnya.
+        </p>
+    </div>
+</div>
+
                 </div>
-
-                <div style={{ marginTop: '18px' }}>
-                    <label
-                        htmlFor="evaporation-temperature"
-                        style={{ fontWeight: 'bold', color: '#334155' }}
-                    >
-                        Tingkat pemanasan model: {temperature}%
-                    </label>
-
-                    <input
-                        id="evaporation-temperature"
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={temperature}
-                        onChange={(event) =>
-                            setTemperature(Number(event.target.value))
-                        }
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            marginTop: '8px',
-                        }}
-                    />
-
-                    <p
-                        style={{
-                            fontSize: '12px',
-                            color: '#64748b',
-                            marginBottom: 0,
-                        }}
-                    >
-                        Geser pengaturan untuk mengubah tingkat
-                        pemanasan pada model. Nilai ini bukan
-                        pengukuran suhu Celsius yang sebenarnya.
-                    </p>
-                </div>
-            </div>
 
             {/* Petunjuk penggunaan */}
             <div
+                className="module2-lab-layout__instructions"
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '18px',
                     borderRadius: '12px',
                     background: '#f0fdf4',
@@ -527,6 +539,7 @@ export default function WaterEvaporationSimulation() {
                         simulasi ke kondisi awal.
                     </li>
                 </ol>
+            </div>
             </div>
 
             {/* Penjelasan kondisi */}
