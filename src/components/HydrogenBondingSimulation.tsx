@@ -31,6 +31,7 @@ const moleculeInfo = {
     },
 };
 
+
 export default function HydrogenBondingSimulation() {
     const [selected, setSelected] = useState<MoleculeType>('H2O');
     const [stage, setStage] = useState<Stage>(0);
@@ -251,10 +252,12 @@ export default function HydrogenBondingSimulation() {
                 </p>
             </div>
 
+            <div className="module2-lab-layout">
+                <div className="module2-lab-layout__main">
             {/* Ilustrasi */}
             <div
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '12px',
                     borderRadius: '14px',
                     background: 'white',
@@ -375,15 +378,9 @@ export default function HydrogenBondingSimulation() {
             </div>
 
             {/* Kendali simulasi */}
-            <div
-                style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '8px',
-                    marginTop: '16px',
-                }}
-            >
+            <div className="module2-lab-controls">
                 <button
+                    className="module2-lab-button module2-lab-button--primary"
                     onClick={() =>
                         setStage((previous) =>
                             previous < 2 ? ((previous + 1) as Stage) : 2
@@ -395,6 +392,7 @@ export default function HydrogenBondingSimulation() {
                 </button>
 
                 <button
+                    className="module2-lab-button module2-lab-button--secondary"
                     onClick={() =>
                         setStage((previous) =>
                             previous > 0 ? ((previous - 1) as Stage) : 0
@@ -405,15 +403,21 @@ export default function HydrogenBondingSimulation() {
                     Langkah sebelumnya
                 </button>
 
-                <button onClick={resetSimulation}>
+                <button
+                    className="module2-lab-button module2-lab-button--outline"
+                    onClick={resetSimulation}
+                >
                     Ulangi simulasi
                 </button>
             </div>
 
+                </div>
+
             {/* Petunjuk penggunaan */}
             <div
+                className="module2-lab-layout__instructions"
                 style={{
-                    marginTop: '18px',
+                    marginTop: 0,
                     padding: '18px',
                     borderRadius: '12px',
                     background: '#f0fdf4',
@@ -454,6 +458,7 @@ export default function HydrogenBondingSimulation() {
                         mengamati kembali dari awal.
                     </li>
                 </ol>
+            </div>
             </div>
 
             {/* Penjelasan tahap */}

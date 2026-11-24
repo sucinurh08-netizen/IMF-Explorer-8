@@ -159,10 +159,27 @@ export const InteractiveMoleculeHero: React.FC = () => {
             </g>
 
             {/* Scientific Distinction Banner */}
-            <rect x="25" y="235" width="410" height="26" rx="6" fill="#F4F8F1" stroke="#D8E2D5" strokeWidth="1" />
-            <text x="230" y="252" textAnchor="middle" fill="#245B45" fontSize="11" fontWeight="600">
-              Garis padat = Ikatan Kovalen (Kuat) | Garis putus-putus = Ikatan Hidrogen (Antarmolekul)
-            </text>
+<rect
+  x="65"
+  y="228"
+  width="330"
+  height="36"
+  rx="8"
+  fill="#F4F8F1"
+  stroke="#D8E2D5"
+  strokeWidth="1"
+/>
+<text
+  x="230"
+  y="243"
+  textAnchor="middle"
+  fill="#245B45"
+  fontSize="10"
+  fontWeight="600"
+>
+  <tspan x="230">Garis padat = Ikatan Kovalen (Kuat)</tspan>
+  <tspan x="230" dy="12">Garis putus-putus = Ikatan Hidrogen</tspan>
+</text>
           </svg>
         )}
 
@@ -231,10 +248,27 @@ export const InteractiveMoleculeHero: React.FC = () => {
               </g>
             )}
 
-            <rect x="25" y="235" width="410" height="26" rx="6" fill="#FAFDF9" stroke="#D8E2D5" strokeWidth="1" />
-            <text x="230" y="252" textAnchor="middle" fill="#27352D" fontSize="11" fontWeight="600">
-              Gaya Dipol-Dipol: Orientasi kutub berlawanan menghasilkan tarikan elektrostatik
-            </text>
+            <rect
+  x="65"
+  y="228"
+  width="330"
+  height="36"
+  rx="8"
+  fill="#FAFDF9"
+  stroke="#D8E2D5"
+  strokeWidth="1"
+/>
+<text
+  x="230"
+  y="243"
+  textAnchor="middle"
+  fill="#27352D"
+  fontSize="10"
+  fontWeight="600"
+>
+  <tspan x="230">Gaya Dipol-Dipol:</tspan>
+  <tspan x="230" dy="12">Tarikan antara kutub yang berlawanan</tspan>
+</text>
           </svg>
         )}
 
@@ -305,12 +339,43 @@ export const InteractiveMoleculeHero: React.FC = () => {
               )}
             </g>
 
-            <rect x="25" y="235" width="410" height="26" rx="6" fill="#FAFDF9" stroke="#D8E2D5" strokeWidth="1" />
-            <text x="230" y="252" textAnchor="middle" fill="#27352D" fontSize="11" fontWeight="600">
-              {londonStep === 1 && 'Tahap 1: Awan elektron berfluktuasi secara simetris'}
-              {londonStep === 2 && 'Tahap 2: Fluktuasi sesaat menciptakan dipol sesaat (δ⁺/δ⁻)'}
-              {londonStep >= 3 && 'Tahap 3: Dipol sesaat menginduksi molekul tetangga -> Tarikan London!'}
-            </text>
+            <rect
+  x="65"
+  y="228"
+  width="330"
+  height="36"
+  rx="8"
+  fill="#FAFDF9"
+  stroke="#D8E2D5"
+  strokeWidth="1"
+/>
+<text
+  x="230"
+  y="243"
+  textAnchor="middle"
+  fill="#27352D"
+  fontSize="10"
+  fontWeight="600"
+>
+  {londonStep === 1 && (
+    <>
+      <tspan x="230">Tahap 1: Awan elektron</tspan>
+      <tspan x="230" dy="12">berfluktuasi secara simetris</tspan>
+    </>
+  )}
+  {londonStep === 2 && (
+    <>
+      <tspan x="230">Tahap 2: Terbentuk dipol sesaat</tspan>
+      <tspan x="230" dy="12">(δ⁺/δ⁻) akibat fluktuasi elektron</tspan>
+    </>
+  )}
+  {londonStep >= 3 && (
+    <>
+      <tspan x="230">Tahap 3: Dipol sesaat menginduksi</tspan>
+      <tspan x="230" dy="12">molekul tetangga → Tarikan London!</tspan>
+    </>
+  )}
+</text>
           </svg>
         )}
 
@@ -350,10 +415,27 @@ export const InteractiveMoleculeHero: React.FC = () => {
               Jejaring Ikatan Hidrogen Kuat
             </text>
 
-            <rect x="25" y="235" width="410" height="26" rx="6" fill="#FAFDF9" stroke="#D8E2D5" strokeWidth="1" />
-            <text x="230" y="252" textAnchor="middle" fill="#27352D" fontSize="11" fontWeight="600">
-              Ketidakcampuran didorong oleh ketidakcocokan polaritas & interaksi molekuler
-            </text>
+            <rect
+  x="65"
+  y="228"
+  width="330"
+  height="36"
+  rx="8"
+  fill="#FAFDF9"
+  stroke="#D8E2D5"
+  strokeWidth="1"
+/>
+<text
+  x="230"
+  y="243"
+  textAnchor="middle"
+  fill="#27352D"
+  fontSize="10"
+  fontWeight="600"
+>
+  <tspan x="230">Air dan minyak tidak bercampur</tspan>
+  <tspan x="230" dy="12">karena perbedaan polaritas molekul</tspan>
+</text>
           </svg>
         )}
       </div>
