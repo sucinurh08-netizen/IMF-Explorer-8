@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 import './Module1Page.css';
 import './Module7Page.css';
@@ -36,6 +36,85 @@ type EssayQuestion = {
     stimulus: string;
     questions: string[];
     expectedAnswers: string[];
+};
+
+type Module7Draft = {
+    student: StudentIdentity;
+    answers: Record<string, string>;
+    essayAnswers: string[][];
+    currentQuestion: number;
+    stage: 'identity' | 'multiple-choice' | 'essay';
+};
+
+const MODULE7_DRAFT_KEY = 'imf_explorer_module7_evaluation_draft';
+
+const loadModule7Draft = (): Module7Draft | null => {
+    try {
+        const savedDraft = localStorage.getItem(MODULE7_DRAFT_KEY);
+
+        if (!savedDraft) return null;
+
+        const draft = JSON.parse(savedDraft);
+
+        if (
+            !draft ||
+            typeof draft !== 'object' ||
+            !draft.student ||
+            typeof draft.student.name !== 'string' ||
+            typeof draft.student.studentClass !== 'string' ||
+            typeof draft.student.attendanceNumber !== 'string' ||
+            typeof draft.answers !== 'object' ||
+            draft.answers === null ||
+            Array.isArray(draft.answers) ||
+            !Array.isArray(draft.essayAnswers) ||
+            draft.essayAnswers.length !== ESSAY_QUESTIONS.length ||
+            !['identity', 'multiple-choice', 'essay'].includes(draft.stage)
+        ) {
+            return null;
+        }
+
+        const validEssayAnswers = draft.essayAnswers.every(
+            (essay: unknown, index: number) =>
+                Array.isArray(essay) &&
+                essay.length === ESSAY_QUESTIONS[index].questions.length &&
+                essay.every((answer: unknown) => typeof answer === 'string')
+        );
+
+        if (!validEssayAnswers) return null;
+
+        const validAnswers = Object.entries(draft.answers).every(
+            ([questionId, answer]) =>
+                MODULE_7_QUESTIONS.some(
+                    (question) => question.id === questionId
+                ) &&
+                typeof answer === 'string' &&
+                MODULE_7_QUESTIONS.find(
+                    (question) => question.id === questionId
+                )?.options.some((option) => option.label === answer)
+        );
+
+        if (!validAnswers) return null;
+
+        return {
+            student: {
+                name: draft.student.name,
+                studentClass: draft.student.studentClass,
+                attendanceNumber: draft.student.attendanceNumber
+            },
+            answers: draft.answers,
+            essayAnswers: draft.essayAnswers,
+            currentQuestion:
+                Number.isInteger(draft.currentQuestion) &&
+                draft.currentQuestion >= 0 &&
+                draft.currentQuestion < MODULE_7_QUESTIONS.length
+                    ? draft.currentQuestion
+                    : 0,
+            stage: draft.stage
+        };
+    } catch (error) {
+        console.error('Gagal memulihkan draf Modul 7:', error);
+        return null;
+    }
 };
 
 export const MODULE_7_QUESTIONS: QuizQuestion[] = [
@@ -543,25 +622,97 @@ const renderEssayStimulus = (stimulus: string) => {
 };
 
 const Module7Page: React.FC = () => {
-    const [stage, setStage] = useState<QuizStage>('identity');
 
-    const [student, setStudent] = useState<StudentIdentity>({
-        name: '',
-        studentClass: '',
-        attendanceNumber: ''
-    });
-
-    const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [answers, setAnswers] = useState<Record<string, string>>({});
-    const [essayAnswers, setEssayAnswers] = useState<string[][]>(
-        ESSAY_QUESTIONS.map((essay) => essay.questions.map(() => ''))
+    // Memuat draf sebelum halaman mulai ditampilkan
+    const [initialDraft] = useState<Module7Draft | null>(
+        () => loadModule7Draft()
     );
 
-    const [submitted, setSubmitted] = useState(false);
-    const [checkingSubmission, setCheckingSubmission] = useState(false);
-    const [alreadySubmitted, setAlreadySubmitted] = useState(false);
-    const [databaseError, setDatabaseError] = useState('');
-    const [submitting, setSubmitting] = useState(false);
+    const [stage, setStage] = useState<QuizStage>(
+        initialDraft?.stage ?? 'identity'
+    );
+
+    const [student, setStudent] = useState<StudentIdentity>(
+        initialDraft?.student ?? {
+            name: '',
+            studentClass: '',
+            attendanceNumber: ''
+        }
+    );
+
+    const [currentQuestion, setCurrentQuestion] = useState(
+        initialDraft?.currentQuestion ?? 0
+    );
+
+    const [answers, setAnswers] = useState<Record<string, string>>(
+        initialDraft?.answers ?? {}
+    );
+
+    const [essayAnswers, setEssayAnswers] = useState<string[][]>(
+        initialDraft?.essayAnswers ??
+        ESSAY_QUESTIONS.map((essay) =>
+            essay.questions.map(() => '')
+        )
+    );
+
+    const [draftStorageError, setDraftStorageError] = useState('');
+
+const [submitted, setSubmitted] = useState(false);
+const [checkingSubmission, setCheckingSubmission] = useState(false);
+const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+const [databaseError, setDatabaseError] = useState('');
+const [submitting, setSubmitting] = useState(false);
+
+// Menyimpan draf evaluasi secara otomatis
+useEffect(() => {
+
+        // Draf tidak perlu disimpan setelah evaluasi selesai
+        if (stage === 'result' || stage === 'review') {
+            try {
+                localStorage.removeItem(MODULE7_DRAFT_KEY);
+                setDraftStorageError('');
+            } catch (error) {
+                console.error('Gagal menghapus draf Modul 7:', error);
+
+                setDraftStorageError(
+                    'Evaluasi telah dikirim, tetapi draf lokal gagal dihapus.'
+                );
+            }
+
+            return;
+        }
+
+        try {
+            const draft: Module7Draft = {
+                student,
+                answers,
+                essayAnswers,
+                currentQuestion,
+                stage
+            };
+
+            localStorage.setItem(
+                MODULE7_DRAFT_KEY,
+                JSON.stringify(draft)
+            );
+
+            setDraftStorageError('');
+
+        } catch (error) {
+            console.error('Gagal menyimpan draf Modul 7:', error);
+
+            setDraftStorageError(
+                'Penyimpanan otomatis gagal. Jawaban mungkin belum tersimpan di perangkat ini. Jangan refresh halaman sebelum masalah penyimpanan teratasi.'
+            );
+        }
+
+    }, [
+        student,
+        answers,
+        essayAnswers,
+        currentQuestion,
+        stage
+    ]);    
 
     const checkStudentSubmission = async () => {
         setCheckingSubmission(true);
@@ -1046,6 +1197,16 @@ const Module7Page: React.FC = () => {
     return (
         <main className="module7-page">
             <div className="module7-container">
+
+            {draftStorageError && (
+    <p
+        className="module7-error-message"
+        role="alert"
+        aria-live="assertive"
+    >
+        {draftStorageError}
+    </p>
+)}
 
                 <header className="module7-header">
                     <span className="module7-label">MODULE 07 · EVALUATE</span>
