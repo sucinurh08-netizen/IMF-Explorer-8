@@ -198,7 +198,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       <aside
         id="sidebar-navigation"
         className={`sidebar-navigation ${isSidebarOpen ? 'open' : ''}`}
-        aria-hidden={!isSidebarOpen}
         aria-label="Navigasi utama"
       >
         {/* Logo dan Identitas Website */}
@@ -264,6 +263,40 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Menu Navigasi */}
         <div className="sidebar-content">
           <p className="sidebar-section-label">MENU NAVIGASI</p>
+          {/* Mini Progress Sidebar */}
+          {isStarted && (
+            <button
+              type="button"
+              className="sidebar-progress-card"
+              onClick={() => scrollTo('progres')}
+              title="Klik untuk melihat progres belajar"
+            >
+              <div className="sidebar-progress-top">
+                <span className="sidebar-progress-title">
+                  Progres Belajar
+                </span>
+                <span className="sidebar-progress-percentage">
+                  {percentage}%
+                </span>
+              </div>
+
+              <div className="sidebar-progress-track">
+                <div
+                  className="sidebar-progress-fill"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+
+              <div className="sidebar-progress-bottom">
+                <span>
+                  {progress.completedPages.length} dari 7 modul
+                </span>
+                <span className="sidebar-progress-arrow">
+                  →
+                </span>
+              </div>
+            </button>
+          )}
 
           <nav aria-label="Navigasi Utama">
             <ul className="sidebar-nav-links">

@@ -142,18 +142,18 @@ export const App: React.FC = () => {
   };
 
   // Confirm progress reset
-const handleConfirmReset = () => {
-  const success = resetProgress();
+  const handleConfirmReset = () => {
+    const success = resetProgress();
 
-  if (!success) {
-    showToast('Gagal mengatur ulang progres. Silakan coba lagi.');
-    return;
-  }
+    if (!success) {
+      showToast('Gagal mengatur ulang progres. Silakan coba lagi.');
+      return;
+    }
 
-  setProgress(getSavedProgress());
-  setIsResetModalOpen(false);
-  showToast('Progres pembelajaran berhasil diatur ulang ke awal.');
-};
+    setProgress(getSavedProgress());
+    setIsResetModalOpen(false);
+    showToast('Progres pembelajaran berhasil diatur ulang ke awal.');
+  };
 
   const handleLaunchModule = (moduleId: string) => {
     const mod = LEARNING_MODULES.find((m) => m.id === moduleId);
@@ -261,6 +261,24 @@ const handleConfirmReset = () => {
               onOpenResetModal={() => setIsResetModalOpen(true)}
               onStartLearning={handleStartOrResume}
             />
+
+            {/* Header Atas */}
+            <div className="page-topbar">
+              <div className="page-topbar-left">
+                <span>Ruang belajar</span>
+                <span className="topbar-separator">›</span>
+                <span className="topbar-current">Beranda</span>
+              </div>
+
+              <div className="page-topbar-right">
+                <span className="topbar-label">
+                  Kimia SMA/MA Kelas XI
+                </span>
+                <span className="topbar-status">
+                  ● Kurikulum Merdeka (Fase F)
+                </span>
+              </div>
+            </div>
 
             <main>
               {/* Hero Section */}
